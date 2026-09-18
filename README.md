@@ -66,16 +66,18 @@ python3 -m http.server 8765
 | `whatsapp_open` | 前往 WhatsApp |
 | `report_download`、`report_deleted`、`advisor_authorized` | 報告操作 |
 
-## 部署到 www.analyst.sme-clinic-ai.com
+## 部署到 www.analyst.sme-clinic-ai.com（Vercel）
 
-目前該網址沒有任何 DNS 紀錄，所以瀏覽器看不到內容。倉庫已附 GitHub Pages 部署工作流程（`.github/workflows/deploy-pages.yml`），啟用步驟：
+目前該網址沒有任何 DNS 紀錄，所以瀏覽器看不到內容。網站是純靜態檔案，Vercel 不需任何建置設定：
 
-1. GitHub 倉庫 Settings → Pages → Build and deployment → Source 選「GitHub Actions」。
-2. 同頁 Custom domain 填入 `www.analyst.sme-clinic-ai.com`，儲存後勾選 Enforce HTTPS。
-3. 在 DNS（sme-clinic-ai.com 的網域管理，目前由 Cloudflare 解析）新增 CNAME 紀錄：名稱 `www.analyst`，目標 `kw-0220.github.io`。如使用 Cloudflare，該紀錄先設為 DNS only（灰雲）以便 GitHub 簽發證書。
-4. 推送到 `main` 或本分支即會自動部署。
+1. 在 Vercel 按 Add New → Project，匯入 GitHub 倉庫 `KW-0220/sme-analyst`。
+2. Framework Preset 選 Other；Build Command 留空；Output Directory 留空（根目錄）。
+3. Settings → Git → Production Branch 設為要上線的分支（目前為 `claude/website-design-pages-74x4d8`，合併後改為 `main`）。
+4. Settings → Domains 加入 `www.analyst.sme-clinic-ai.com`。Vercel 會顯示要新增的 DNS 紀錄，一般是 CNAME `www.analyst` 指向 `cname.vercel-dns.com`。
+5. 到 sme-clinic-ai.com 的 DNS 管理（目前由 Cloudflare 解析）新增該紀錄。如在 Cloudflare，先設為 DNS only（灰雲），待 Vercel 顯示 Valid Configuration 後再決定是否開啟代理。
+6. 之後每次推送到 Production Branch 都會自動部署。
 
-如選用其他靜態主機（Cloudflare Pages、Netlify 等），直接以倉庫根目錄為發布目錄，不需建置指令。
+`vercel.json` 為報告、分析及授權頁加上 `X-Robots-Tag: noindex` 與 `Cache-Control: no-store`，並為全站加上基本安全標頭。
 
 ## 上線前
 
