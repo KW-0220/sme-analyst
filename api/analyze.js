@@ -10,6 +10,8 @@ import { Extraction, SYSTEM_PROMPT } from "./_lib/schema.js";
 import { extractWithGemini } from "./_lib/gemini.js";
 
 const MAX_MB = Number(process.env.SME_MAX_MB || 4);
+/* 金鑰名稱：以 GEMINI_API_KEY 為準，亦接受 Gemini_Key／GEMINI_KEY */
+const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.Gemini_Key || process.env.GEMINI_KEY || "";
 const CLAUDE_MODEL = process.env.CLAUDE_MODEL || "claude-opus-5";
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
@@ -46,8 +48,8 @@ export default async function handler(req, res) {
   let extracted;
   if (process.env.SME_MOCK === "1") {
     extracted = mockExtraction();
-  } else if (process.env.GEMINI_API_KEY) {
-    const r = await extractWithGemini(buf, { apiKey: process.env.GEMINI_API_KEY, model: GEMINI_MODEL });
+  } else if (GEMINI_KEY) {
+    const r = await extractWithGemini(buf, { apiKey: GEMINI_KEY, model: GEMINI_MODEL });
     if (!r.ok) return json(res, r.code === "auth" ? 500 : r.code === "rate_limit" ? 503 : r.code === "api" ? 502 : 422, { ok: false, code: r.code, message: r.message });
     extracted = r.extracted;
   } else if (process.env.ANTHROPIC_API_KEY) {

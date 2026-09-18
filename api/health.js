@@ -2,7 +2,7 @@
 export default function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
-  const gemini = !!process.env.GEMINI_API_KEY;
+  const gemini = !!(process.env.GEMINI_API_KEY || process.env.Gemini_Key || process.env.GEMINI_KEY);
   const anthropic = !!process.env.ANTHROPIC_API_KEY;
   const near = Object.keys(process.env).filter(k => /GEMINI|ANTHROPIC|API_KEY/i.test(k));
   res.end(JSON.stringify({
