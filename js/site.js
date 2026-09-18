@@ -14,10 +14,10 @@
       '<path d="M12 44l8-11 6 9 8-16 7 10 15-18" fill="none" stroke="#119aa3" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>' +
       '<path d="M50 16l9-3-2 9z" fill="#119aa3"/>' +
     "</svg>";
-  const LOGO = (C.logoImage
-      ? '<img class="logo__mark" src="' + C.logoImage + '" alt="">'
-      : LOGO_SVG) +
-    '<span class="logo__text"><span class="logo__name">SME Clinic</span><span class="logo__tag">企業妙手診所</span></span>';
+  /* 官方 Logo 圖檔已包含字樣，故只放圖片；沒有圖檔時用 SVG 加文字 */
+  const LOGO = C.logoImage
+    ? '<img class="logo__img" src="' + C.logoImage + '" alt="SME Clinic 企業妙手診所" width="1794" height="588">'
+    : LOGO_SVG + '<span class="logo__text"><span class="logo__name">SME Clinic</span><span class="logo__tag">企業妙手診所</span></span>';
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));

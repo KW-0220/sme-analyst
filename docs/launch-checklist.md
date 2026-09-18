@@ -44,8 +44,8 @@
 
 ## 視覺
 
-- [ ] `assets/hero-banner.jpg`：放入用戶提供的橫額相片
-- [ ] 官方 Logo 圖檔放入 `assets/`，並在 `js/config.js` 的 `logoImage` 填入路徑（目前為依 Logo 重繪的 SVG）
+- [x] `assets/hero-banner.jpg`：已放入用戶提供的橫額相片
+- [x] 官方 Logo 圖檔已放入 `assets/logo.png`
 - [ ] 如品牌檔另有準確色值，更新 `css/styles.css` 的 `--brand`、`--navy`
 
 ## 關於我們

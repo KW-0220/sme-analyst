@@ -1,3 +1,5 @@
 # assets
 
-- `hero-banner.jpg`：首頁 Hero 相片，請放入用戶提供的橫額圖。CSS 以 `background-position: right center` 顯示右方相片部分，左方以白色漸層覆蓋，文字由 HTML 提供。
+- `hero-banner.jpg`：用戶提供的完整橫額圖（1672×941），作為來源保存。
+- `hero-photo.jpg`：由橫額圖右方裁出的相片（632×941），首頁 Hero 實際使用。
+- `logo.png`：公司 Logo，已裁去原檔留白，透明背景。

@@ -13,7 +13,7 @@
 <header data-component="site-header"></header>
 
 <main id="main">
-  <!-- B 首屏 Hero：依用戶提供的橫額圖版式；相片檔請存放於 assets/hero-banner.jpg -->
+  <!-- B 首屏 Hero：依用戶提供的橫額圖版式；相片為 assets/hero-photo.jpg -->
   <section class="hero">
     <div class="hero__bg" aria-hidden="true"></div>
     <div class="container hero__grid">
@@ -217,7 +217,7 @@
   (function () {
     var img = new Image();
     img.onerror = function () { document.querySelector(".hero").classList.add("hero--fallback"); };
-    img.src = "assets/hero-banner.jpg";
+    img.src = "assets/hero-photo.jpg";
   })();
 </script>
 </body>

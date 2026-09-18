@@ -47,7 +47,7 @@ python3 -m http.server 8765
 
 ## Hero 相片
 
-首頁 Hero 依用戶提供的橫額圖版式製作。相片檔請存放於 `assets/hero-banner.jpg`；檔案未放置前會顯示品牌色底作後備。Logo 目前依用戶提供的公司 Logo 以 SVG 重繪。如要改用原檔，把圖檔放入 `assets/`，並在 `js/config.js` 的 `logoImage` 填入路徑。
+首頁 Hero 依用戶提供的橫額圖版式製作，相片為 `assets/hero-photo.jpg`（由橫額圖 `assets/hero-banner.jpg` 右方裁出）；檔案缺失時會顯示品牌色底作後備。頁首及頁尾 Logo 使用 `assets/logo.png`（`js/config.js` 的 `logoImage`）；設為 `null` 時改用 `js/site.js` 內的 SVG 重繪版本。
 
 ## 追蹤事件
 
