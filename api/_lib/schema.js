@@ -41,9 +41,22 @@ export const SYSTEM_PROMPT = `你是一個銀行月結單資料抽取器。你�
    - 轉往其他戶口號碼、或摘要為 TRANSFER TO 之類用 internal_transfer。
    - 摘要含股東、董事、DIRECTOR、SHAREHOLDER 字樣用 shareholder。
    - 退票、RETURNED、UNPAID、DISHONOURED、REJECTED 用 returned_item。
-4. 如文件為綜合結單而包含多個戶口或幣種，accounts 逐一列出（同一戶口的不同幣種各列一項），每項填上該戶口該幣種的期初及期末結餘；transactions 包括全部戶口的交易，並以 account_index 標明所屬戶口。multiple_currencies 只在 accounts 內出現多於一種幣種時為 true。
+4. 如文件為綜合結單而包含多個戶口或幣種，accounts 逐一列出（同一戶口的不同幣種各列一項），每項填上該戶口該幣種的期初及期末結餘；transactions 包括全部戶口的交易，並以所屬戶口索引標明。multiple_currencies 只在 accounts 內出現多於一種幣種時為 true。
+7. 交易摘要保留原文但刪去多餘空格及純裝飾字元；每筆交易只輸出必要欄位，不要加入額外文字。
 5. pages_readable 少於 pages_total 或內容模糊、被裁切時，在 unreadable_notes 寫明是哪一頁、影響哪些日期。
 6. 日期一律轉為 YYYY-MM-DD；年份以結單期間為準。描述文字使用文件原文；說明文字使用繁體中文。`;
+
+/* Gemini 傳輸用的精簡結構：交易欄位用短鍵以減少輸出 token，伺服器收到後還原為完整欄位名。
+   i=account_index d=date t=description a=amount b=balance_after p=page c=category q=needs_confirmation */
+export function expandCompact(raw) {
+  if (!raw || !Array.isArray(raw.transactions)) return raw;
+  return Object.assign({}, raw, {
+    transactions: raw.transactions.map(t => ("t" in t || "q" in t) ? {
+      account_index: t.i, date: t.d, description: t.t, amount: t.a, balance_after: t.b === undefined ? null : t.b,
+      page: t.p, category: t.c, needs_confirmation: !!t.q, confirmation_reason: null
+    } : t)
+  });
+}
 
 /* Gemini responseSchema（OpenAPI 子集） */
 const S = (type, extra) => Object.assign({ type }, extra || {});
@@ -54,11 +67,12 @@ export const GEMINI_SCHEMA = S("OBJECT", {
     accounts: S("ARRAY", { items: S("OBJECT", { properties: { bank_name: S("STRING"), account_type: S("STRING"), masked_number: S("STRING"), currency: S("STRING"), opening_balance: S("NUMBER", { nullable: true }), closing_balance: S("NUMBER", { nullable: true }) }, required: ["bank_name", "account_type", "masked_number", "currency", "opening_balance", "closing_balance"] }) }),
     statement_period: S("OBJECT", { nullable: true, properties: { start: S("STRING"), end: S("STRING") }, required: ["start", "end"] }),
     transactions: S("ARRAY", { items: S("OBJECT", {
+      description: "每筆交易。i=所屬戶口索引 d=日期YYYY-MM-DD t=摘要原文 a=金額(進帳正/支出負) b=交易後結餘(無則null) p=頁碼 c=分類 q=需要確認",
       properties: {
-        account_index: S("INTEGER"), date: S("STRING"), description: S("STRING"), amount: S("NUMBER"), balance_after: S("NUMBER", { nullable: true }), page: S("INTEGER"),
-        category: S("STRING", { enum: CATEGORIES }), needs_confirmation: S("BOOLEAN"), confirmation_reason: S("STRING", { nullable: true })
+        i: S("INTEGER"), d: S("STRING"), t: S("STRING"), a: S("NUMBER"), b: S("NUMBER", { nullable: true }), p: S("INTEGER"),
+        c: S("STRING", { enum: CATEGORIES }), q: S("BOOLEAN")
       },
-      required: ["account_index", "date", "description", "amount", "balance_after", "page", "category", "needs_confirmation", "confirmation_reason"]
+      required: ["i", "d", "t", "a", "b", "p", "c", "q"]
     }) }),
     pages_total: S("INTEGER"),
     pages_readable: S("INTEGER"),
