@@ -2,7 +2,7 @@
    - 只在請求期間於記憶體處理文件，不寫入磁碟或資料庫。
    - 回應為 JSON：{ ok: true, report } 或 { ok: false, code, message }。
    環境變數（設定其一）：GEMINI_API_KEY（Google Gemini）或 ANTHROPIC_API_KEY（Claude）。兩者都有時優先用 Gemini。
-   可選：GEMINI_MODEL（預設 gemini-3.5-flash）、CLAUDE_MODEL（預設 claude-opus-5）、SME_MAX_MB（預設 4）、SME_MOCK=1（本地測試，不呼叫 API）。 */
+   可選：GEMINI_MODEL（預設 gemini-3.5-flash）、GEMINI_FALLBACK_MODELS（逗號分隔，每日額度用盡時依次改用）、CLAUDE_MODEL（預設 claude-opus-5）、SME_MAX_MB（預設 4）、SME_MOCK=1（本地測試，不呼叫 API）。 */
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { buildReport, accountLabel } from "./_lib/build-report.js";
@@ -51,8 +51,8 @@ export default async function handler(req, res) {
   if (process.env.SME_MOCK === "1") {
     extracted = mockExtraction();
   } else if (GEMINI_KEY) {
-    const r = await extractWithGemini(buf, { apiKey: GEMINI_KEY, model: GEMINI_MODEL });
-    log("gemini", { ok: r.ok, code: r.code || null, usage: r.usage || null, model: GEMINI_MODEL });
+    const r = await extractWithGemini(buf, { apiKey: GEMINI_KEY, model: GEMINI_MODEL, fallbackModels: (process.env.GEMINI_FALLBACK_MODELS || "").split(",").map(x => x.trim()).filter(Boolean).length ? process.env.GEMINI_FALLBACK_MODELS.split(",").map(x => x.trim()) : undefined });
+    log("gemini", { ok: r.ok, code: r.code || null, usage: r.usage || null, model: r.model || GEMINI_MODEL });
     if (!r.ok) return json(res, r.code === "auth" ? 500 : r.code === "rate_limit" ? 503 : r.code === "api" ? 502 : 422, { ok: false, code: r.code, message: r.message });
     extracted = r.extracted;
   } else if (process.env.ANTHROPIC_API_KEY) {
