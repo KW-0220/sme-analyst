@@ -1,8 +1,23 @@
 /* 共用：頁首、頁尾、待核實標記、追蹤事件、手機固定按鈕、搵顧問視窗 */
 (function () {
   const C = window.SME_CONFIG;
-  /* Logo：依橫額圖以 SVG 重繪（十字、上升折線、柱狀）。如有官方 Logo 檔，請以 <img> 取代。 */
-  const LOGO = '<svg class="logo__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M13 3h14v10h10v14H27v10H13V27H3V13h10z" fill="none" stroke="#1b3a66" stroke-width="2.6" stroke-linejoin="round"/><rect x="14" y="24" width="3.5" height="7" fill="#1a9e93"/><rect x="19" y="20" width="3.5" height="11" fill="#1a9e93"/><rect x="24" y="16" width="3.5" height="15" fill="#1a9e93"/><path d="M12 22l7-7 5 4 8-8" fill="none" stroke="#1a9e93" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 11h5v5" fill="none" stroke="#1a9e93" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="logo__text"><span class="logo__name">SME Clinic</span><span class="logo__tag">企業妙手診所</span></span>';
+  /* Logo：依用戶提供的公司 Logo 以 SVG 重繪（圓角十字、上升折線與箭嘴、三條柱、聽診器圓點）。
+     如 config.logoImage 有設定，改用該圖檔。 */
+  const LOGO_SVG =
+    '<svg class="logo__mark" viewBox="0 0 64 64" aria-hidden="true">' +
+      '<path d="M22 6h18a3 3 0 013 3v13h13a3 3 0 013 3v10a3 3 0 01-3 3H43v12a4 4 0 01-4 4H24a4 4 0 01-4-4V47a3 3 0 00-3-3H9a3 3 0 01-3-3V25a3 3 0 013-3h10V9a3 3 0 013-3z" fill="none" stroke="#13294b" stroke-width="4.5" stroke-linejoin="round"/>' +
+      '<path d="M43 47c0 6 3 9 8 9" fill="none" stroke="#13294b" stroke-width="4" stroke-linecap="round"/>' +
+      '<circle cx="53" cy="56" r="5.5" fill="#fff" stroke="#13294b" stroke-width="3.5"/>' +
+      '<circle cx="53" cy="56" r="2.4" fill="#119aa3"/>' +
+      '<rect x="24" y="43" width="4.5" height="9" fill="#119aa3"/><rect x="30.5" y="38" width="4.5" height="14" fill="#119aa3"/><rect x="37" y="33" width="4.5" height="19" fill="#119aa3"/>' +
+      '<path d="M12 44l8-11 6 9 8-16 7 10 15-18" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M12 44l8-11 6 9 8-16 7 10 15-18" fill="none" stroke="#119aa3" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M50 16l9-3-2 9z" fill="#119aa3"/>' +
+    "</svg>";
+  const LOGO = (C.logoImage
+      ? '<img class="logo__mark" src="' + C.logoImage + '" alt="">'
+      : LOGO_SVG) +
+    '<span class="logo__text"><span class="logo__name">SME Clinic</span><span class="logo__tag">企業妙手診所</span></span>';
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));

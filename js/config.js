@@ -5,6 +5,9 @@ window.SME_CONFIG = {
   siteName: "SME Clinic",
   siteUrl: "https://www.analyst.sme-clinic-ai.com",
 
+  /* 官方 Logo 圖檔路徑（例如 "assets/logo.png"）。為 null 時使用 js/site.js 內依 Logo 重繪的 SVG。 */
+  logoImage: null,
+
   /* 官網完整分析入口：目前使用用戶指定的官網網址。
      日後如官網提供專用上載頁，改為經確認的實際連結；不自行猜測路徑。 */
   officialSiteUrl: "https://www.sme-clinic-ai.com",

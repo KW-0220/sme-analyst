@@ -26,7 +26,7 @@ python3 -m http.server 8765
 
 ## 程式結構
 
-- `css/styles.css`：全站樣式。品牌色值取樣自用戶提供的橫額圖（青綠 `#1a9e93`、深藍 `#1b3a66`）。
+- `css/styles.css`：全站樣式。品牌色值取樣自用戶提供的公司 Logo（青綠 `#119aa3`、深藍 `#13294b`）。
 - `js/config.js`：所有須核實的營運資料。值為 `null` 時頁面顯示「待核實」標記。
 - `js/site.js`：頁首、頁尾、Logo、追蹤事件、手機固定按鈕、問題卡片與「搵顧問」視窗。
 - `js/upload.js`：上載區狀態機（未選檔、已選檔、格式不支援、檔案過大、已加密）。
@@ -47,7 +47,7 @@ python3 -m http.server 8765
 
 ## Hero 相片
 
-首頁 Hero 依用戶提供的橫額圖版式製作。相片檔請存放於 `assets/hero-banner.jpg`；檔案未放置前會顯示品牌色底作後備。Logo 目前以 SVG 重繪，如有官方 Logo 檔可在 `js/site.js` 的 `LOGO` 常數替換。
+首頁 Hero 依用戶提供的橫額圖版式製作。相片檔請存放於 `assets/hero-banner.jpg`；檔案未放置前會顯示品牌色底作後備。Logo 目前依用戶提供的公司 Logo 以 SVG 重繪。如要改用原檔，把圖檔放入 `assets/`，並在 `js/config.js` 的 `logoImage` 填入路徑。
 
 ## 追蹤事件
 

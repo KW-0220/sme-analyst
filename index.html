@@ -57,11 +57,11 @@
               <text x="30" y="14" font-size="9" text-anchor="end" fill="#6b7280">160k</text>
               <text x="30" y="54" font-size="9" text-anchor="end" fill="#6b7280">80k</text>
               <text x="30" y="94" font-size="9" text-anchor="end" fill="#6b7280">0</text>
-              <polyline fill="none" stroke="#1a9e93" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
+              <polyline fill="none" stroke="#119aa3" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
                 points="36,50 48,7.5 60,31.5 84,79.5 119,49.5 143,85.5 202,65.5 214,70.3 238,70.5 250,85.5 286,58 309,61 333,70 357,40 381,65"/>
               <circle cx="143" cy="85.5" r="4" fill="#b42318" stroke="#fff" stroke-width="2"/>
-              <circle cx="381" cy="65" r="4" fill="#1a9e93" stroke="#fff" stroke-width="2"/>
-              <text x="143" y="104" font-size="9" text-anchor="middle" font-weight="600" fill="#1b3a66">最低 HK$9,000</text>
+              <circle cx="381" cy="65" r="4" fill="#119aa3" stroke="#fff" stroke-width="2"/>
+              <text x="143" y="104" font-size="9" text-anchor="middle" font-weight="600" fill="#13294b">最低 HK$9,000</text>
             </svg>
           </div>
         </div>
@@ -213,5 +213,12 @@
 <script src="js/site.js"></script>
 <script src="js/api.js"></script>
 <script src="js/upload.js"></script>
+<script>
+  (function () {
+    var img = new Image();
+    img.onerror = function () { document.querySelector(".hero").classList.add("hero--fallback"); };
+    img.src = "assets/hero-banner.jpg";
+  })();
+</script>
 </body>
 </html>

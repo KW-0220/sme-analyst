@@ -1,12 +1,12 @@
 /* SME Clinic — 月結單初步分析網站樣式
-   品牌色值：由用戶提供的橫額圖取樣（青綠 CTA、深藍標題）。如品牌檔另有準確色值，請在此替換。 */
+   品牌色值：由用戶提供的公司 Logo 取樣（青綠 #119aa3、深藍 #13294b）。如品牌檔另有準確色值，請在此替換。 */
 :root {
-  --brand: #1a9e93;
-  --brand-strong: #157f76;
-  --brand-soft: #e4f4f2;
-  --brand-ink: #0f5f58;
-  --navy: #1b3a66;
-  --ink: #1b3a66;
+  --brand: #119aa3;
+  --brand-strong: #0e7f87;
+  --brand-soft: #e3f4f5;
+  --brand-ink: #0b5f66;
+  --navy: #13294b;
+  --ink: #13294b;
   --ink-2: #4b5563;
   --ink-3: #6b7280;
   --surface: #ffffff;
@@ -22,7 +22,7 @@
   --err-soft: #fde8e6;
   --info: #1d4ed8;
   --info-soft: #e8efff;
-  --chart-line: #1a9e93;
+  --chart-line: #119aa3;
   --chart-low: #b42318;
   --grid: #e3e7ec;
   --radius: 12px;
@@ -98,7 +98,7 @@ small, .small { font-size: 0.9rem; }
 .site-header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
 .site-header .container { display: flex; align-items: center; justify-content: space-between; min-height: var(--nav-h); gap: 16px; }
 .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--navy); }
-.logo__mark { width: 40px; height: 40px; flex: none; }
+.logo__mark { width: 42px; height: 42px; flex: none; object-fit: contain; }
 .logo__text { display: flex; flex-direction: column; line-height: 1.1; }
 .logo__name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.01em; }
 .logo__tag { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--navy); font-weight: 500; }
@@ -373,4 +373,10 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-sp
 @media (max-width: 480px) {
   .kpis { grid-template-columns: 1fr; gap: 6px; }
   .kpi { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+}
+
+/* Hero 後備：assets/hero-banner.jpg 未放置時，右方顯示品牌色底區塊 */
+@media (min-width: 901px) {
+  .hero--fallback .hero__bg { display: none; }
+  .hero--fallback .hero__photo { display: block; aspect-ratio: 4 / 3; border-radius: 20px; background: linear-gradient(135deg, #f2f8f7 0%, #d5ecee 100%); }
 }
