@@ -1,55 +1,17 @@
 /* Vercel 無伺服器函數：接收一份公司銀行月結單 PDF，交由 Claude 讀取並抽取交易，再由程式計算報告。
    - 只在請求期間於記憶體處理文件，不寫入磁碟或資料庫。
    - 回應為 JSON：{ ok: true, report } 或 { ok: false, code, message }。
-   環境變數：ANTHROPIC_API_KEY（必須）、SME_MAX_MB（可選，預設 4）、SME_MOCK=1（本地測試，不呼叫 API）。 */
+   環境變數（設定其一）：GEMINI_API_KEY（Google Gemini）或 ANTHROPIC_API_KEY（Claude）。兩者都有時優先用 Gemini。
+   可選：GEMINI_MODEL（預設 gemini-3.5-flash）、CLAUDE_MODEL（預設 claude-opus-5）、SME_MAX_MB（預設 4）、SME_MOCK=1（本地測試，不呼叫 API）。 */
 import Anthropic from "@anthropic-ai/sdk";
-import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { buildReport } from "./_lib/build-report.js";
+import { Extraction, SYSTEM_PROMPT } from "./_lib/schema.js";
+import { extractWithGemini } from "./_lib/gemini.js";
 
 const MAX_MB = Number(process.env.SME_MAX_MB || 4);
-const MODEL = "claude-opus-5";
-
-const Extraction = z.object({
-  is_bank_statement: z.boolean().describe("文件是否公司銀行戶口月結單／對帳單"),
-  not_statement_reason: z.string().nullable().describe("如不是月結單，簡短說明文件類型"),
-  accounts: z.array(z.object({
-    bank_name: z.string().describe("銀行名稱，未能辨識則空字串"),
-    account_type: z.string().describe("戶口類型，例如 往來戶口、儲蓄戶口、綜合戶口；未能辨識則空字串"),
-    masked_number: z.string().describe("戶口號碼最後 4 位數字，未能辨識則空字串"),
-    currency: z.string().describe("ISO 4217 幣種代碼，例如 HKD")
-  })).describe("文件內出現的戶口。綜合結單有多個戶口或幣種時逐一列出"),
-  statement_period: z.object({ start: z.string(), end: z.string() }).nullable().describe("結單期間，YYYY-MM-DD"),
-  opening_balance: z.number().nullable().describe("期初結餘；未能辨識則 null"),
-  closing_balance: z.number().nullable().describe("期末結餘；未能辨識則 null"),
-  transactions: z.array(z.object({
-    date: z.string().describe("交易日期 YYYY-MM-DD"),
-    description: z.string().describe("銀行摘要原文，略去重複空格"),
-    amount: z.number().describe("金額：進帳為正，支出為負"),
-    balance_after: z.number().nullable().describe("該筆交易後文件列出的結餘；文件沒有則 null"),
-    page: z.number().int().describe("所在文件頁碼，由 1 起"),
-    category: z.enum(["customer_payment", "supplier_payment", "salary", "mpf", "rent", "utilities", "bank_fee", "credit_card", "loan_repayment", "tax", "internal_transfer", "shareholder", "cash", "returned_item", "other", "unknown"]),
-    needs_confirmation: z.boolean().describe("摘要不足以確定性質時為 true"),
-    confirmation_reason: z.string().nullable()
-  })).describe("只包括第一個戶口、第一種幣種的交易"),
-  pages_total: z.number().int(),
-  pages_readable: z.number().int().describe("可清楚讀取交易內容的頁數"),
-  unreadable_notes: z.array(z.string()).describe("缺頁、模糊、被裁切或未能讀取的具體說明；沒有則空陣列"),
-  multiple_currencies: z.boolean()
-});
-
-const SYSTEM = `你是一個銀行月結單資料抽取器。你會收到一份 PDF，請按輸出格式抽取資料。
-規則：
-1. 只抽取文件上實際印出的內容。不要推測沒有出現的交易、日期或金額。
-2. 金額以文件所示為準：進帳為正數，支出為負數。每筆交易只記一次，不要把結餘欄當作交易。
-3. category 只在摘要能明確支持時才分類；不清楚的一律用 unknown 並把 needs_confirmation 設為 true。
-   - 客戶名稱或「FPS／轉數快入帳」而無法確定來源時用 customer_payment 並設 needs_confirmation 為 true。
-   - 轉往其他戶口號碼、或摘要為 TRANSFER TO 之類用 internal_transfer。
-   - 摘要含股東、董事、DIRECTOR、SHAREHOLDER 字樣用 shareholder。
-   - 退票、RETURNED、UNPAID、DISHONOURED、REJECTED 用 returned_item。
-4. 如文件為綜合結單而包含多個戶口或幣種，accounts 逐一列出，multiple_currencies 按實際情況填寫，transactions 只包括第一個戶口的第一種幣種。
-5. pages_readable 少於 pages_total 或內容模糊、被裁切時，在 unreadable_notes 寫明是哪一頁、影響哪些日期。
-6. 描述文字使用文件原文；說明文字使用繁體中文。`;
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL || "claude-opus-5";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -84,15 +46,18 @@ export default async function handler(req, res) {
   let extracted;
   if (process.env.SME_MOCK === "1") {
     extracted = mockExtraction();
-  } else {
-    if (!process.env.ANTHROPIC_API_KEY) return json(res, 500, { ok: false, code: "no_api_key", message: "伺服器未設定 AI 服務金鑰（ANTHROPIC_API_KEY），請聯絡網站管理員。" });
+  } else if (process.env.GEMINI_API_KEY) {
+    const r = await extractWithGemini(buf, { apiKey: process.env.GEMINI_API_KEY, model: GEMINI_MODEL });
+    if (!r.ok) return json(res, r.code === "auth" ? 500 : r.code === "rate_limit" ? 503 : r.code === "api" ? 502 : 422, { ok: false, code: r.code, message: r.message });
+    extracted = r.extracted;
+  } else if (process.env.ANTHROPIC_API_KEY) {
     const client = new Anthropic();
     let response;
     try {
       response = await client.messages.parse({
-        model: MODEL,
+        model: CLAUDE_MODEL,
         max_tokens: 16000,
-        system: SYSTEM,
+        system: SYSTEM_PROMPT,
         thinking: { type: "adaptive" },
         output_config: { effort: "medium", format: zodOutputFormat(Extraction) },
         messages: [{
@@ -114,6 +79,8 @@ export default async function handler(req, res) {
     if (response.stop_reason === "max_tokens") return json(res, 422, { ok: false, code: "too_long", message: "文件內容過長，未能一次處理完成。請改用單一戶口、單一月份的月結單。" });
     extracted = response.parsed_output;
     if (!extracted) return json(res, 502, { ok: false, code: "parse", message: "AI 服務回應格式不完整，請重試。" });
+  } else {
+    return json(res, 500, { ok: false, code: "no_api_key", message: "伺服器未設定 AI 服務金鑰（GEMINI_API_KEY 或 ANTHROPIC_API_KEY），請聯絡網站管理員。" });
   }
 
   if (!extracted.is_bank_statement) {

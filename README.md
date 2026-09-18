@@ -39,12 +39,15 @@ python3 -m http.server 8765
 
 ## 分析後端
 
-流程：首頁選檔並同意 → 檔案存入瀏覽器 IndexedDB → 狀態頁以 `application/octet-stream` POST 到 `/api/analyze` → 函數檢查 PDF 格式、大小及加密 → 以 base64 文件區塊交給 Claude（模型 `claude-opus-5`，結構化輸出）→ `build-report.js` 由抽取資料計算報告 → 回傳 JSON → 瀏覽器存入 sessionStorage 並顯示。
+流程：首頁選檔並同意 → 檔案存入瀏覽器 IndexedDB → 狀態頁以 `application/octet-stream` POST 到 `/api/analyze` → 函數檢查 PDF 格式、大小及加密 → 以 base64 文件交給 AI 模型按固定結構抽取（Google Gemini 或 Claude，見下）→ `build-report.js` 由抽取資料計算報告 → 回傳 JSON → 瀏覽器存入 sessionStorage 並顯示。
+
+模型供應商由環境變數決定：設定了 `GEMINI_API_KEY` 用 Google Gemini（預設模型 `gemini-3.5-flash`，可用 `GEMINI_MODEL` 更改）；否則設定了 `ANTHROPIC_API_KEY` 用 Claude（預設 `claude-opus-5`，可用 `CLAUDE_MODEL` 更改）。兩者共用同一抽取結構（`api/_lib/schema.js`），回傳後都經 zod 驗證。如更換供應商，須同步更新 `js/config.js` 內 `processing.processors` 及保留說明。
 
 - 伺服器不儲存文件、抽取資料或報告；報告只在產生它的瀏覽器工作階段可見。
 - 每次只分析一個戶口、一種幣種。綜合結單會被拒絕並提示改用單一戶口版本。
 - 缺頁或模糊時回傳 `partial`，報告只顯示可核實項目並列明缺漏。
-- 環境變數：`ANTHROPIC_API_KEY`（必須，在 Vercel → Settings → Environment Variables 設定）、`SME_MAX_MB`（可選，預設 4）、`SME_MOCK=1`（本地測試，不呼叫 API）。
+- 環境變數：`GEMINI_API_KEY` 或 `ANTHROPIC_API_KEY`（二選一，在 Vercel → Settings → Environment Variables 設定）、`GEMINI_MODEL`／`CLAUDE_MODEL`（可選）、`SME_MAX_MB`（可選，預設 4）、`SME_MOCK=1`（本地測試，不呼叫 API）。
+- 戶口號碼只回傳最後 4 位；戶口持有人名稱不回傳瀏覽器。
 - `vercel.json` 將函數 `maxDuration` 設為 60 秒。
 
 本地測試：
@@ -52,7 +55,7 @@ python3 -m http.server 8765
 ```bash
 npm install
 SME_MOCK=1 node scripts/dev-server.mjs      # 模擬資料，不呼叫 Claude
-ANTHROPIC_API_KEY=sk-ant-... node scripts/dev-server.mjs
+GEMINI_API_KEY=... node scripts/dev-server.mjs
 ```
 
 ## Hero 相片

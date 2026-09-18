@@ -30,11 +30,11 @@ window.SME_CONFIG = {
   processing: {
     /* 以下三項按現行實作填寫；如日後加入資料庫或改變流程，須同步更新 */
     processors: [
-      "Anthropic Claude API：讀取月結單影像及文字，抽取交易資料",
+      "Google Gemini API：讀取月結單影像及文字，抽取交易資料",
       "Vercel：網站及分析函數的主機，文件只在處理請求期間存在於記憶體"
     ],
     retentionOriginal: "只在分析請求期間存在於伺服器記憶體，分析完成即不保留；瀏覽器內的暫存副本在分析完成或按「刪除」後清除",
-    retentionExtracted: "伺服器不儲存抽取資料；Anthropic 按其 API 資料政策處理請求內容",
+    retentionExtracted: "伺服器不儲存抽取資料；Google 按其 Gemini API 服務條款處理請求內容",
     retentionReport: "只保存在你的瀏覽器本次工作階段，關閉分頁或按「刪除本次文件及分析資料」即清除；伺服器不保留報告，亦沒有備份",
     advisorAccessDefault: null, // 顧問是否預設可查看本次報告（例如「預設不可查看」）
     advisorAuthorizeMethod: null // 用戶要求跟進時如何授權

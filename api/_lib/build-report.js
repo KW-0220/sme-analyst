@@ -182,12 +182,15 @@ export function buildReport(extracted, opts) {
   }
 
   const acctType = acct.account_type ? acct.account_type : "銀行戶口";
+  /* 只保留戶口號碼最後 4 位，其他一律不回傳瀏覽器 */
+  const digits = String(acct.masked_number || "").replace(/\D/g, "");
+  const last4 = digits.length >= 4 ? digits.slice(-4) : "";
   return {
     isFictional: false,
     reportId,
     period: { label: periodLabel(extracted.statement_period.start, extracted.statement_period.end), start: extracted.statement_period.start, end: extracted.statement_period.end, isLatestMonth: isLatestMonth(extracted.statement_period.end) },
     currency: cur,
-    account: { bankLabel: [acct.bank_name, acctType].filter(Boolean).join(" "), maskedNumber: acct.masked_number ? "•••• " + acct.masked_number : "" },
+    account: { bankLabel: [acct.bank_name, acctType].filter(Boolean).join(" "), maskedNumber: last4 ? "•••• " + last4 : "" },
     document: { pagesRead: extracted.pages_readable, pagesTotal: extracted.pages_total, complete, notes: docNotes },
     partial: !complete,
     openingBalance: typeof opening === "number" ? opening : null,

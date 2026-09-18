@@ -18,15 +18,16 @@
 
 ## 文件使用說明及私隱政策（`js/config.js` → `processing`）
 
-- [x] `processors`：已按現行實作填寫（Anthropic Claude API、Vercel）
+- [x] `processors`：已按現行實作填寫（Google Gemini API、Vercel）
 - [x] `retentionOriginal`、`retentionExtracted`、`retentionReport`：已按現行實作填寫（伺服器不儲存；報告只在瀏覽器工作階段）。如日後加入資料庫，須更新
-- [ ] 核對 Anthropic API 資料政策的描述是否需要補充具體期限
+- [ ] 核對 Google Gemini API 服務條款的描述是否需要補充具體期限
 - [ ] `privacy.html`：報告存取控制方式、政策生效日期
 - [ ] `terms.html`：顧問收費及服務身份、佣金披露（須與實際營運一致）、管轄法律、生效日期
 
 ## 系統限制（`js/config.js` → `upload`）
 
-- [ ] Vercel → Settings → Environment Variables 加入 `ANTHROPIC_API_KEY`（Production），否則分析會回報「伺服器未設定 AI 服務金鑰」
+- [ ] Vercel → Settings → Environment Variables 加入 `GEMINI_API_KEY`（Production），否則分析會回報「伺服器未設定 AI 服務金鑰」
+- [ ] 確認 Gemini API key 所屬方案：免費層的請求內容可能按 Google 條款用於改善產品，處理客戶月結單前應改用已啟用計費的方案，並核對私隱政策的描述
 
 - [x] `maxSizeMB`：4 MB（Vercel 函數請求上限 4.5 MB）
 - [ ] 如產品支援遮蓋帳號，先完成辨識測試；未確認前不承諾遮蓋後仍可分析
