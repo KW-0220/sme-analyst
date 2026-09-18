@@ -1,0 +1,12 @@
+{
+  "name": "sme-analyst",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SME Clinic 月結單初步分析網站",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.126.0",
+    "zod": "^3.25.0"
+  }
+}

@@ -23,14 +23,12 @@
 <footer data-component="site-footer"></footer>
 <script src="js/config.js"></script>
 <script src="js/site.js"></script>
-<script src="js/demo-data.js"></script>
 <script src="js/api.js"></script>
 <script src="js/report.js"></script>
 <script>
 (function () {
   const params = new URLSearchParams(location.search);
   const jobId = params.get("job") || "";
-  const partial = params.get("partial") === "1";
   const { openModal, closeModal, track, esc } = window.SME;
 
   const actions =
@@ -38,19 +36,22 @@
     '<button type="button" class="btn btn--danger btn--sm" id="delete-btn">刪除本次文件及分析資料</button>' +
     '<a class="btn btn--ghost btn--sm" href="index.html#upload">重新分析</a>';
 
-  window.SME_API.getReport(jobId, { partial }).then(r => {
+  const r = window.SME_API.getReport(jobId);
+  if (!r) {
+    document.getElementById("report-root").innerHTML = '<section class="report-section"><h1 style="font-size:1.5rem">找不到此報告</h1><p class="ink2">報告只保存在產生它的瀏覽器工作階段。如你已關閉分頁、刪除了報告，或以其他裝置開啟此連結，便需要重新上載月結單。</p><div class="btn-row"><a class="btn btn--primary" href="index.html#upload">重新上載</a><a class="btn btn--secondary" href="demo-report.html">先睇示範報告</a></div></section>';
+  } else {
     document.getElementById("fictional-banner").classList.toggle("hidden", !r.isFictional);
     window.SME_REPORT.render(r, { reportKind: "prelim", actions, showAuthorizeLink: true });
     document.getElementById("download-btn").addEventListener("click", () => { track("report_download"); window.print(); });
     document.getElementById("delete-btn").addEventListener("click", showDeleteConfirm);
-  });
+  }
 
   const box = document.getElementById("delete-box");
   function showDeleteConfirm() {
     box.innerHTML =
       '<h2 id="delete-title">刪除本次文件及分析資料？</h2>' +
-      '<p class="ink2">系統會刪除你上載的原始月結單、抽取出來的交易資料，以及本次報告。刪除後不能復原，亦不能再開啟此報告。</p>' +
-      '<p class="small muted">備份及日誌的處理方式按<a href="privacy.html" target="_blank" rel="noopener">私隱政策</a>所述。</p>' +
+      '<p class="ink2">系統會清除瀏覽器內暫存的原始月結單及本次報告。刪除後不能復原，亦不能再開啟此報告。伺服器不保留你的文件或報告。</p>' +
+      '<p class="small muted">文件處理方式見<a href="privacy.html" target="_blank" rel="noopener">私隱政策</a>。</p>' +
       '<div class="modal__foot"><button type="button" class="btn btn--secondary" data-close-modal="delete-modal">取消</button><button type="button" class="btn btn--primary" id="delete-confirm">確認刪除</button></div>';
     openModal("delete-modal");
     document.getElementById("delete-confirm").addEventListener("click", doDelete);

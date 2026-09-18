@@ -1,16 +1,19 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": { "api/analyze.js": { "maxDuration": 60, "memory": 1024 } },
   "headers": [
     {
       "source": "/(report|analysis|authorize).html",
-      "headers": [
+      "functions": { "api/analyze.js": { "maxDuration": 60, "memory": 1024 } },
+  "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
         { "key": "Cache-Control", "value": "no-store" }
       ]
     },
     {
       "source": "/(.*)",
-      "headers": [
+      "functions": { "api/analyze.js": { "maxDuration": 60, "memory": 1024 } },
+  "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }

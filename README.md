@@ -18,7 +18,7 @@ python3 -m http.server 8765
 | `index.html` | 首頁：導覽、Hero、先睇你會收到甚麼、認識 SME Clinic、文件使用說明、上載區、常見問題、頁尾 |
 | `demo-report.html` | 示範報告，毋須登入或上載即可閱讀，頂部常駐「虛構資料示範」標記 |
 | `analysis.html` | 分析狀態頁。原型可用 `?state=` 強制顯示：`checking`、`reading`、`summarizing`、`done`、`failed`、`unreadable`、`partial` |
-| `report.html` | 初步結果頁，含問題卡片、「搵顧問」、前往官網區塊、下載摘要、刪除流程。原型可加 `&partial=1` 顯示部分可讀狀態，`&delete=fail` 模擬刪除失敗 |
+| `report.html` | 初步結果頁，含問題卡片、「搵顧問」、前往官網區塊、下載摘要、刪除流程。報告由 `?job=` 對應的瀏覽器工作階段讀取 |
 | `authorize.html` | 顧問查看報告的獨立授權畫面。`?state=fail` 模擬失敗 |
 | `about.html`、`privacy.html`、`terms.html` | 關於我們、私隱政策及文件使用說明、使用條款 |
 | `full-analysis-intake.html` | 官網「完整分析入口」版型：文件清單、可沿用文件、用途及處理安排、上載 |
@@ -33,17 +33,27 @@ python3 -m http.server 8765
 - `js/analysis.js`：分析狀態頁。
 - `js/report.js`：報告繪製（收支卡片、結餘折線、交易整理、留意事項、下一步）。
 - `js/demo-data.js`：示範報告數據，`isFictional: true`。
-- `js/api.js`：後端介接存根。正式系統須以真實 API 取代。
+- `js/api.js`：前端與後端介接。檔案經 IndexedDB 交給狀態頁上載，報告保存在 sessionStorage。
+- `api/analyze.js`：Vercel 無伺服器函數。接收 PDF，交 Claude 抽取結構化資料（zod schema），再由 `api/_lib/build-report.js` 計算收支、核對結餘、產生留意事項。
+- `scripts/dev-server.mjs`：本地開發伺服器，掛載 `/api/analyze`。
 
-## 接入真實後端
+## 分析後端
 
-`js/api.js` 定義四個函數：`startAnalysis`、`pollStatus`、`getReport`、`deleteReport`。真實系統須：
+流程：首頁選檔並同意 → 檔案存入瀏覽器 IndexedDB → 狀態頁以 `application/octet-stream` POST 到 `/api/analyze` → 函數檢查 PDF 格式、大小及加密 → 以 base64 文件區塊交給 Claude（模型 `claude-opus-5`，結構化輸出）→ `build-report.js` 由抽取資料計算報告 → 回傳 JSON → 瀏覽器存入 sessionStorage 並顯示。
 
-1. `startAnalysis` 以安全方式上載檔案，回傳工作識別碼。
-2. `pollStatus` 回傳實際處理階段。狀態頁只按回傳值更新，不使用假倒數。
-3. `getReport` 回傳與 `js/demo-data.js` 相同結構的真實資料，並將 `isFictional` 設為 `false`。報告頁的「原型示範資料」標記只在 `isFictional` 為 `true` 時出現，示範資料因此不會混入真實分析。
-4. `deleteReport` 實際刪除原始文件、抽取資料及報告，備份處理須與私隱政策一致。
-5. 報告網址須有存取控制（例如一次性連結或有效期），並保持 `noindex`。`robots.txt` 已排除分析及報告頁。
+- 伺服器不儲存文件、抽取資料或報告；報告只在產生它的瀏覽器工作階段可見。
+- 每次只分析一個戶口、一種幣種。綜合結單會被拒絕並提示改用單一戶口版本。
+- 缺頁或模糊時回傳 `partial`，報告只顯示可核實項目並列明缺漏。
+- 環境變數：`ANTHROPIC_API_KEY`（必須，在 Vercel → Settings → Environment Variables 設定）、`SME_MAX_MB`（可選，預設 4）、`SME_MOCK=1`（本地測試，不呼叫 API）。
+- `vercel.json` 將函數 `maxDuration` 設為 60 秒。
+
+本地測試：
+
+```bash
+npm install
+SME_MOCK=1 node scripts/dev-server.mjs      # 模擬資料，不呼叫 Claude
+ANTHROPIC_API_KEY=sk-ant-... node scripts/dev-server.mjs
+```
 
 ## Hero 相片
 

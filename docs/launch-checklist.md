@@ -18,16 +18,17 @@
 
 ## 文件使用說明及私隱政策（`js/config.js` → `processing`）
 
-- [ ] `processors`：實際使用的外部 AI／雲端處理服務名稱及用途
-- [ ] `retentionOriginal`：原始文件保留期限與刪除方法
-- [ ] `retentionExtracted`：抽取資料保留期限與刪除方法
-- [ ] `retentionReport`：報告保留期限與刪除方法，以及備份處理方式
+- [x] `processors`：已按現行實作填寫（Anthropic Claude API、Vercel）
+- [x] `retentionOriginal`、`retentionExtracted`、`retentionReport`：已按現行實作填寫（伺服器不儲存；報告只在瀏覽器工作階段）。如日後加入資料庫，須更新
+- [ ] 核對 Anthropic API 資料政策的描述是否需要補充具體期限
 - [ ] `privacy.html`：報告存取控制方式、政策生效日期
 - [ ] `terms.html`：顧問收費及服務身份、佣金披露（須與實際營運一致）、管轄法律、生效日期
 
 ## 系統限制（`js/config.js` → `upload`）
 
-- [ ] `maxSizeMB`：系統實際檔案大小上限
+- [ ] Vercel → Settings → Environment Variables 加入 `ANTHROPIC_API_KEY`（Production），否則分析會回報「伺服器未設定 AI 服務金鑰」
+
+- [x] `maxSizeMB`：4 MB（Vercel 函數請求上限 4.5 MB）
 - [ ] 如產品支援遮蓋帳號，先完成辨識測試；未確認前不承諾遮蓋後仍可分析
 
 ## 標籤（`js/config.js` → `claims`）

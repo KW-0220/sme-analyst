@@ -109,12 +109,12 @@
     submit.disabled = true;
     submit.textContent = "正在傳送文件…";
     try {
-      const { jobId } = await window.SME_API.startAnalysis({ name: file.name, size: file.size });
+      const { jobId } = await window.SME_API.startAnalysis(file);
       track("upload_success");
       location.href = "analysis.html?job=" + encodeURIComponent(jobId);
     } catch (err) {
       submit.disabled = false; submit.textContent = "開始初步分析";
-      status.insertAdjacentHTML("beforeend", notice("err", "!", "<p>今次未能傳送文件，請重試。</p>"));
+      status.insertAdjacentHTML("beforeend", notice("err", "!", "<p>今次未能暫存文件（瀏覽器可能封鎖了儲存空間），請重試或改用其他瀏覽器。</p>"));
     }
   });
 

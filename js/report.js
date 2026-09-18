@@ -1,6 +1,13 @@
 /* 報告繪製：初步結果頁與示範報告頁共用 */
 (function () {
-  const { esc, fmtHKD, questionCard, track } = window.SME;
+  const { esc, questionCard, track } = window.SME;
+  let CUR = "HKD";
+  function fmtHKD(n) {
+    if (typeof n !== "number" || isNaN(n)) return "未能核實";
+    const sign = n < 0 ? "−" : "";
+    const prefix = CUR === "HKD" ? "HK$" : CUR + " ";
+    return sign + prefix + Math.abs(Math.round(n)).toLocaleString("en-HK");
+  }
 
   function periodNote(r) {
     if (r.period.isLatestMonth) return "";
@@ -13,7 +20,10 @@
   }
 
   function reconciliation(r) {
-    const expected = r.openingBalance + r.totalIn - r.totalOut;
+    if (typeof r.openingBalance !== "number" || typeof r.closingBalance !== "number") {
+      return '<div class="notice notice--warn" style="margin-top:12px"><span class="notice__icon" aria-hidden="true">!</span><p>期初或期末結餘未能從文件核實，期初＋進帳−支出＝期末的核對未能完成。</p></div>';
+    }
+    const expected = Math.round((r.openingBalance + r.totalIn - r.totalOut) * 100) / 100;
     if (!r.document.complete) {
       return '<div class="notice notice--warn" style="margin-top:12px"><span class="notice__icon" aria-hidden="true">!</span><p>文件未完整讀取，期初＋進帳−支出＝期末的核對未能完成。請補回完整版本後重新分析。</p></div>';
     }
@@ -26,18 +36,23 @@
   function kpis(r) {
     const net = r.totalIn - r.totalOut;
     const items = [
-      ["期初結餘", fmtHKD(r.openingBalance)],
+      ["期初結餘", typeof r.openingBalance === "number" ? fmtHKD(r.openingBalance) : "未能核實"],
       ["總進帳", fmtHKD(r.totalIn)],
       ["總支出", fmtHKD(r.totalOut)],
       [net >= 0 ? "淨流入" : "淨流出", fmtHKD(Math.abs(net))],
-      ["期末結餘", r.document.complete ? fmtHKD(r.closingBalance) : "未能核實"]
+      ["期末結餘", r.document.complete && typeof r.closingBalance === "number" ? fmtHKD(r.closingBalance) : "未能核實"]
     ];
     return '<div class="kpi-row">' + items.map(([l, v]) => '<div class="stat"><div class="stat__label">' + l + '</div><div class="stat__value">' + v + '</div></div>').join("") + "</div>";
   }
 
   /* 結餘折線：只畫交易日結餘，不補畫每日曲線 */
   function balanceChart(r, containerId) {
-    const pts = [{ date: r.period.start, balance: r.openingBalance, label: "期初" }].concat(r.transactions.map(t => ({ date: t.date, balance: t.balance, desc: t.desc })));
+    const pts = (typeof r.openingBalance === "number" ? [{ date: r.period.start, balance: r.openingBalance, label: "期初" }] : [])
+      .concat(r.transactions.filter(t => typeof t.balance === "number").map(t => ({ date: t.date, balance: t.balance, desc: t.desc })));
+    if (pts.length < 2) {
+      document.getElementById(containerId).innerHTML = '<p class="ink2" style="margin:0">文件未列出交易後結餘，亦未能由期初結餘推算，無法繪製結餘變化。</p>';
+      return null;
+    }
     const W = 720, H = 260, padL = 64, padR = 16, padT = 16, padB = 36;
     const minB = Math.min(0, ...pts.map(p => p.balance));
     const maxB = Math.max(...pts.map(p => p.balance));
@@ -96,15 +111,16 @@
   function txTable(r) {
     const rows = r.transactions.map(t =>
       "<tr><td>" + esc(t.date) + "</td><td>" + esc(t.desc) + '</td><td class="num">' + (t.amount > 0 ? "+" : "") + fmtHKD(t.amount) + "</td><td>" +
-      '<span class="tag ' + (t.confirm ? "tag--confirm" : "") + '">' + esc(t.category) + "</span></td><td class=\"num\">" + fmtHKD(t.balance) + '</td><td class="num">' + t.page + "</td></tr>").join("");
+      '<span class="tag ' + (t.confirm ? "tag--confirm" : "") + '">' + esc(t.category) + "</span></td><td class=\"num\">" + (typeof t.balance === "number" ? fmtHKD(t.balance) : "—") + '</td><td class="num">' + t.page + "</td></tr>").join("");
     const list = r.transactions.map(t =>
       '<div class="tx-item"><div class="tx-item__top"><span>' + esc(t.desc) + '</span><span class="tx-item__amt">' + (t.amount > 0 ? "+" : "") + fmtHKD(t.amount) + "</span></div>" +
-      '<div class="tx-item__meta"><span>' + esc(t.date) + '</span><span class="tag ' + (t.confirm ? "tag--confirm" : "") + '">' + esc(t.category) + "</span><span>結餘 " + fmtHKD(t.balance) + "</span><span>第 " + t.page + " 頁</span></div></div>").join("");
+      '<div class="tx-item__meta"><span>' + esc(t.date) + '</span><span class="tag ' + (t.confirm ? "tag--confirm" : "") + '">' + esc(t.category) + "</span><span>結餘 " + (typeof t.balance === "number" ? fmtHKD(t.balance) : "—") + "</span><span>第 " + t.page + " 頁</span></div></div>").join("");
     return '<div class="table-wrap tx-table"><table><thead><tr><th>日期</th><th>摘要</th><th class="num">金額</th><th>初步分類</th><th class="num">結餘</th><th class="num">頁碼</th></tr></thead><tbody>' + rows + '</tbody></table></div><div class="tx-list">' + list + "</div>";
   }
 
   function render(r, opts) {
     opts = opts || {};
+    CUR = r.currency || "HKD";
     const kind = opts.reportKind || "prelim";
     const root = document.getElementById("report-root");
     const net = r.totalIn - r.totalOut;
@@ -118,7 +134,7 @@
           '<dl class="report-meta">' +
             "<div><dt>分析月份</dt><dd>" + esc(r.period.label) + "</dd></div>" +
             "<div><dt>幣種</dt><dd>" + esc(r.currency) + "</dd></div>" +
-            "<div><dt>戶口</dt><dd>" + esc(r.account.bankLabel) + " " + esc(r.account.maskedNumber) + "</dd></div>" +
+            "<div><dt>戶口</dt><dd>" + esc((r.account.bankLabel + " " + r.account.maskedNumber).trim() || "未能辨識") + "</dd></div>" +
             "<div><dt>文件完整性</dt><dd>" + docNote(r) + "</dd></div>" +
           "</dl>" +
           periodNote(r) +
@@ -176,7 +192,7 @@
 
     const low = balanceChart(r, "balance-chart");
     document.getElementById("balance-foot").innerHTML =
-      "<span>最低位：<strong>" + fmtHKD(low.balance) + "</strong>（" + esc(low.date) + "）</span>" +
+      (low ? "<span>最低位：<strong>" + fmtHKD(low.balance) + "</strong>（" + esc(low.date) + "）</span>" : "") +
       "<span>每日平均結餘：" + (r.dailyBalanceComplete ? "已計算" : "無法計算（文件未能完整重建每日日終結餘）") + "</span>";
     track("report_view", { report: kind, fictional: !!r.isFictional });
   }
