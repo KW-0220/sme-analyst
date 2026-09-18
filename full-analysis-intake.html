@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>完整分析入口（官網版型）｜SME Clinic</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="intake">
+<a class="skip-link" href="#main">跳至主要內容</a>
+<header data-component="site-header"></header>
+<div class="demo-banner" role="note">此頁為官網「完整分析入口」的版型，供官網團隊採用。實際文件種類與期間按官網分析項目及已確認清單顯示。</div>
+<main id="main" class="section">
+  <div class="container prose">
+    <span class="eyebrow">完整財務分析</span>
+    <h1>上載完整財務報告及所需文件</h1>
+    <p class="ink2" style="font-size:1.05rem">完整分析按你實際提交的公司原始財務資料產生。以下先列出文件清單、用途及處理安排，你確認後再上載。</p>
+
+    <div class="notice notice--info"><span class="notice__icon" aria-hidden="true">i</span><div><p><strong>先告訴你：</strong>此入口是否需要建立帳戶或提供聯絡資料：<span class="pending">［待核實：官網帳戶或聯絡欄位要求］</span>。如有要求，會在你繼續前清楚列出。</p></div></div>
+
+    <h2>1. 文件清單</h2>
+    <p class="small muted">「完整財務報告及所需文件」指公司的原始財務資料，不是把第一階段生成的 AI 摘要重新上載。以下為版型示例；正式清單由營運團隊按分析項目確認後填入。</p>
+    <ul class="checklist">
+      <li><span class="chk" aria-hidden="true"></span><div><strong>最近財政年度財務報表</strong>（經審核或管理帳目，包括損益表及資產負債表）<br><span class="req">用途：盈利能力及負債分析</span></div></li>
+      <li><span class="chk" aria-hidden="true"></span><div><strong>所有公司銀行戶口最近數個月的月結單</strong><br><span class="req">用途：跨戶口現金流及結餘趨勢。期間：<span class="pending">［待核實：所需月數］</span></span></div></li>
+      <li><span class="chk" aria-hidden="true"></span><div><strong>應收及應付帳齡表</strong>（如有）<br><span class="req">用途：收款及付款周期</span></div></li>
+      <li><span class="chk" aria-hidden="true"></span><div><strong>現有貸款及租賃合約摘要</strong>（如有）<br><span class="req">用途：還款承擔</span></div></li>
+    </ul>
+
+    <h2>2. 可沿用的文件</h2>
+    <p>如你已在月結單初步分析上載過文件，系統會在此清楚列出可以沿用的項目，讓你逐項確認。在安全銜接建立前，不會自動帶入任何資料，按「前往官網」亦不等於授權轉移文件。</p>
+    <div class="notice"><span class="notice__icon" aria-hidden="true" style="background:var(--surface-3)">–</span><p>目前沒有可沿用的文件。請直接上載所需資料。</p></div>
+
+    <h2>3. 用途及處理安排</h2>
+    <ul>
+      <li>用途：按實際收到的文件產生完整財務分析。資料不足的項目會列明缺漏。</li>
+      <li>處理者：<span data-fill="company.legalName" data-label="營運公司全名"></span>及<span class="pending">［待核實：官網實際使用的外部處理服務］</span>。</li>
+      <li>保留與刪除：<span class="pending">［待核實：官網文件保留期限與刪除方法］</span>。</li>
+      <li>人工接觸：顧問是否預設可查看：<span data-fill="processing.advisorAccessDefault" data-label="顧問預設查看安排"></span>。</li>
+    </ul>
+
+    <h2>4. 上載</h2>
+    <p class="ink2">確認以上內容後，在此上載所需文件。（版型：上載元件沿用初步分析的上載區樣式，逐份顯示檔名、大小、更換及移除。）</p>
+    <div class="dropzone" role="presentation" style="cursor:default">
+      <div class="dropzone__icon" aria-hidden="true">📄</div>
+      <div class="dropzone__main">拖放 PDF 到這裏，或按一下選擇檔案。</div>
+      <p class="dropzone__help">可分多次上載。請保留全部頁面。</p>
+    </div>
+    <div class="consent">
+      <input type="checkbox" id="intake-consent" disabled>
+      <label for="intake-consent">我確認有權提交這些文件，並已閱讀私隱政策，同意按所述方式處理文件以產生完整分析。</label>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="btn btn--primary" disabled>開始完整分析</button>
+      <a class="btn btn--ghost" href="full-analysis.html">查看完整分析報告版型</a>
+    </div>
+  </div>
+</main>
+<footer data-component="site-footer"></footer>
+<script src="js/config.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /analysis.html
+Disallow: /report.html
+Disallow: /authorize.html
+Allow: /
+Sitemap: https://www.analyst.sme-clinic-ai.com/sitemap.xml

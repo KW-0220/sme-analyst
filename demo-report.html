@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>示範報告｜SME Clinic</title>
+<meta name="description" content="以虛構資料展示 SME Clinic 月結單初步分析報告的內容與版面。毋須登入或上載文件即可閱讀。">
+<link rel="canonical" href="https://www.analyst.sme-clinic-ai.com/demo-report.html">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="demo">
+<a class="skip-link" href="#main">跳至主要內容</a>
+<header data-component="site-header"></header>
+<div class="demo-banner" role="note">虛構資料示範，並非真實客戶或你的分析結果。</div>
+<main id="main" class="section--tight">
+  <div class="container" id="report-root"></div>
+  <div class="container no-print" style="padding-top:24px">
+    <div class="notice notice--info"><span class="notice__icon" aria-hidden="true">i</span><div><p><strong>想睇自己公司的結果？</strong>上載最近一個月公司銀行月結單，即可取得同一格式的初步摘要。</p><div class="btn-row" style="margin-top:10px"><a class="btn btn--primary" href="index.html#upload" data-track="cta_upload_demo">上載月結單，開始初步分析</a></div></div></div>
+  </div>
+</main>
+<footer data-component="site-footer"></footer>
+<script src="js/config.js"></script>
+<script src="js/site.js"></script>
+<script src="js/demo-data.js"></script>
+<script src="js/report.js"></script>
+<script>
+  window.SME_REPORT.render(window.SME_DEMO_REPORT, {
+    reportKind: "prelim",
+    actions: '<button type="button" class="btn btn--secondary btn--sm" onclick="window.print()">下載摘要（示範）</button>'
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>授權顧問查看報告｜SME Clinic</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="authorize">
+<a class="skip-link" href="#main">跳至主要內容</a>
+<header data-component="site-header"></header>
+<main id="main" class="section">
+  <div class="container status-wrap">
+    <div class="status-card" id="auth-card">
+      <span class="eyebrow">獨立授權</span>
+      <h1 style="font-size:1.5rem">授權顧問查看本次報告</h1>
+      <p class="ink2">此步驟可跳過。只有你在此頁明確選擇的內容才會分享給顧問；按「搵顧問」本身不視為同意分享報告。</p>
+      <form id="auth-form" novalidate>
+        <h2 style="font-size:1.05rem;margin-top:20px">分享甚麼</h2>
+        <ul class="checklist" id="share-list">
+          <li><input type="checkbox" id="share-summary" style="width:22px;height:22px;accent-color:var(--brand)"><label for="share-summary"><strong>初步摘要及留意事項</strong><br><span class="small muted">一句摘要、收支數字、結餘變化及留意事項卡片</span></label></li>
+          <li><input type="checkbox" id="share-tx" style="width:22px;height:22px;accent-color:var(--brand)"><label for="share-tx"><strong>交易整理</strong><br><span class="small muted">逐筆交易的日期、摘要、金額、初步分類及頁碼</span></label></li>
+          <li><input type="checkbox" id="share-pdf" style="width:22px;height:22px;accent-color:var(--brand)"><label for="share-pdf"><strong>原始月結單 PDF</strong><br><span class="small muted">你上載的原始文件</span></label></li>
+        </ul>
+
+        <h2 style="font-size:1.05rem;margin-top:20px">顧問如何聯絡你</h2>
+        <p class="small muted">只在你要求跟進時才需要提供。</p>
+        <div style="display:grid;gap:12px;max-width:420px">
+          <label>稱呼<br><input type="text" id="auth-name" autocomplete="name" style="width:100%;min-height:44px;font:inherit;padding:8px 12px;border:1px solid var(--border-strong);border-radius:10px"></label>
+          <label>WhatsApp 或電話號碼<br><input type="tel" id="auth-phone" autocomplete="tel" style="width:100%;min-height:44px;font:inherit;padding:8px 12px;border:1px solid var(--border-strong);border-radius:10px"></label>
+        </div>
+
+        <div class="consent">
+          <input type="checkbox" id="auth-consent">
+          <label for="auth-consent">我同意 SME Clinic 顧問查看上方勾選的內容，用於跟進我的查詢。我可以隨時按私隱政策所述方法撤回授權。</label>
+        </div>
+        <p class="small muted">授權有效期及撤回方法：<span data-fill="processing.advisorAuthorizeMethod" data-label="授權方法及撤回安排"></span></p>
+        <div id="auth-error" class="hidden" style="margin-bottom:12px"></div>
+        <div class="btn-row">
+          <button type="submit" class="btn btn--primary" id="auth-submit">確認授權</button>
+          <a class="btn btn--secondary" href="javascript:history.back()">跳過，返回報告</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+<footer data-component="site-footer"></footer>
+<script src="js/config.js"></script>
+<script src="js/site.js"></script>
+<script>
+(function () {
+  const form = document.getElementById("auth-form"), card = document.getElementById("auth-card"), err = document.getElementById("auth-error");
+  const forced = new URLSearchParams(location.search).get("state");
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const shares = ["share-summary", "share-tx", "share-pdf"].filter(id => document.getElementById(id).checked);
+    const phone = document.getElementById("auth-phone").value.trim();
+    const consent = document.getElementById("auth-consent").checked;
+    const problems = [];
+    if (!shares.length) problems.push("請至少選擇一項要分享的內容。");
+    if (!phone) problems.push("請提供顧問可以聯絡你的號碼。");
+    if (!consent) problems.push("請勾選同意。");
+    if (problems.length) {
+      err.className = "notice notice--err"; err.innerHTML = '<span class="notice__icon" aria-hidden="true">!</span><div>' + problems.map(p => "<p>" + p + "</p>").join("") + "</div>";
+      return;
+    }
+    err.className = "hidden";
+    card.innerHTML = '<span class="eyebrow">處理中</span><h1 style="font-size:1.5rem">正在記錄你的授權</h1><p class="ink2"><span class="spinner" style="display:inline-block;border-color:rgba(0,0,0,.2);border-top-color:var(--brand);vertical-align:middle;margin-right:8px" aria-hidden="true"></span>請稍候。</p>';
+    setTimeout(() => {
+      if (forced === "fail") {
+        card.innerHTML = '<span class="eyebrow">未能完成</span><h1 style="font-size:1.5rem">未能記錄授權</h1><div class="notice notice--err"><span class="notice__icon" aria-hidden="true">!</span><p>今次未能記錄你的授權，顧問暫時不會看到任何內容。請重試；如持續失敗，請聯絡支援。</p></div><div class="btn-row" style="margin-top:16px"><a class="btn btn--primary" href="authorize.html">重試</a><a class="btn btn--ghost" href="about.html#contact">聯絡支援</a></div>';
+        return;
+      }
+      window.SME.track("advisor_authorized", { items: shares.length });
+      card.innerHTML = '<span class="eyebrow">完成</span><h1 style="font-size:1.5rem">已記錄授權</h1><div class="notice notice--ok"><span class="notice__icon" aria-hidden="true">✓</span><p>顧問可以查看你選擇的 ' + shares.length + ' 項內容，並會以你提供的號碼聯絡你。你可以隨時撤回授權。</p></div><div class="btn-row" style="margin-top:16px"><a class="btn btn--primary" href="javascript:history.back()">返回報告</a></div>';
+    }, 1200);
+  });
+})();
+</script>
+</body>
+</html>

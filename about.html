@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>關於我們｜SME Clinic</title>
+<meta name="description" content="誰營運 SME Clinic 月結單初步分析網站、實際服務範圍、顧問如何介入，以及如何聯絡。">
+<link rel="canonical" href="https://www.analyst.sme-clinic-ai.com/about.html">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="about">
+<a class="skip-link" href="#main">跳至主要內容</a>
+<header data-component="site-header"></header>
+<main id="main" class="section">
+  <div class="container prose" data-trust-view="about-page">
+    <span class="eyebrow">關於我們</span>
+    <h1>誰營運這個網站，以及我哋實際做啲乜</h1>
+    <p class="ink2" style="font-size:1.05rem">SME Clinic 以 AI 協助企業整理銀行月結單及財務文件，將收支、結餘同需要覆核的項目整理成易讀摘要。你可以先了解結果，再決定是否需要進一步協助。</p>
+
+    <h2 id="operator">誰營運這個網站</h2>
+    <div class="company-box">
+      <dl>
+        <dt>營運公司</dt><dd data-fill="company.legalName" data-label="營運公司全名"></dd>
+        <dt>營業地址</dt><dd data-fill="company.address" data-label="營業地址"></dd>
+        <dt>本網站</dt><dd><a href="https://www.analyst.sme-clinic-ai.com">www.analyst.sme-clinic-ai.com</a></dd>
+        <dt>官網</dt><dd><a href="https://www.sme-clinic-ai.com" target="_blank" rel="noopener">www.sme-clinic-ai.com</a></dd>
+      </dl>
+    </div>
+
+    <h2 id="scope">實際服務範圍</h2>
+    <ul>
+      <li><strong>月結單初步分析（本網站）：</strong>你上載一份公司銀行月結單 PDF，系統讀取交易、計算收支與結餘，整理成一份初步摘要及需要確認的交易清單。結果只反映所上載戶口及月份。</li>
+      <li><strong>完整財務分析（官網）：</strong>你按官網的文件清單上載完整財務報告及所需資料後，系統按實際收到的文件產生較全面的分析。資料不足的項目會列明缺漏。</li>
+      <li><strong>顧問跟進：</strong>你在任何一份報告內按「搵顧問」，可以就具體問題透過 WhatsApp 查詢。查詢屬自願，不設財務評分門檻。</li>
+    </ul>
+    <p>本網站的 AI 摘要只供初步了解所提交戶口的現金流，不代表完整公司財務評估或任何融資審批結果。</p>
+
+    <h2 id="advisor">顧問如何介入</h2>
+    <ol>
+      <li>你先自行閱讀報告。顧問是否預設可查看本次報告：<span data-fill="processing.advisorAccessDefault" data-label="顧問預設查看安排"></span>。</li>
+      <li>你就報告內某項結果按「搵顧問」，確認查詢內容後前往 WhatsApp。訊息只包含你確認的問題類別與查詢句，不會自動夾附公司名稱、金額、帳號、文件或報告連結。</li>
+      <li>如你希望顧問查看本次報告，須另行在<a href="authorize.html">授權頁</a>選擇分享內容。按「搵顧問」本身不視為同意分享報告。授權方式：<span data-fill="processing.advisorAuthorizeMethod" data-label="授權方法"></span>。</li>
+    </ol>
+
+    <h2 id="contact">如何聯絡</h2>
+    <div class="company-box">
+      <dl>
+        <dt>聯絡電郵</dt><dd data-fill="company.contactEmail" data-label="聯絡電郵"></dd>
+        <dt>聯絡電話</dt><dd data-fill="company.contactPhone" data-label="聯絡電話"></dd>
+        <dt>服務時間</dt><dd data-fill="company.businessHours" data-label="服務時間"></dd>
+      </dl>
+    </div>
+    <p class="small muted" style="margin-top:12px">本頁不展示客戶案例、資格徽章或使用數量。如日後有可核實的團隊資料，會在此加入真實姓名、職責及照片。</p>
+
+    <div class="btn-row" style="margin-top:28px">
+      <a class="btn btn--primary" href="index.html#upload">上載月結單，開始初步分析</a>
+      <a class="btn btn--secondary" href="demo-report.html" data-track="demo_report_click" data-track-placement="about">先睇示範報告</a>
+    </div>
+  </div>
+</main>
+<footer data-component="site-footer"></footer>
+<script src="js/config.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>現金流初步摘要｜SME Clinic</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="report">
+<a class="skip-link" href="#main">跳至主要內容</a>
+<header data-component="site-header"></header>
+<div id="fictional-banner" class="demo-banner no-print hidden" role="note">此為原型示範資料，並非真實客戶或你的分析結果。正式系統接入後，此處顯示你上載文件的實際結果。</div>
+<main id="main" class="section--tight">
+  <div class="container" id="report-root"></div>
+</main>
+
+<!-- 刪除確認視窗：確認 → 處理中 → 成功／失敗 -->
+<div class="modal" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title" aria-hidden="true">
+  <div class="modal__box" id="delete-box"></div>
+</div>
+
+<footer data-component="site-footer"></footer>
+<script src="js/config.js"></script>
+<script src="js/site.js"></script>
+<script src="js/demo-data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/report.js"></script>
+<script>
+(function () {
+  const params = new URLSearchParams(location.search);
+  const jobId = params.get("job") || "";
+  const partial = params.get("partial") === "1";
+  const { openModal, closeModal, track, esc } = window.SME;
+
+  const actions =
+    '<button type="button" class="btn btn--secondary btn--sm" id="download-btn">下載摘要</button>' +
+    '<button type="button" class="btn btn--danger btn--sm" id="delete-btn">刪除本次文件及分析資料</button>' +
+    '<a class="btn btn--ghost btn--sm" href="index.html#upload">重新分析</a>';
+
+  window.SME_API.getReport(jobId, { partial }).then(r => {
+    document.getElementById("fictional-banner").classList.toggle("hidden", !r.isFictional);
+    window.SME_REPORT.render(r, { reportKind: "prelim", actions, showAuthorizeLink: true });
+    document.getElementById("download-btn").addEventListener("click", () => { track("report_download"); window.print(); });
+    document.getElementById("delete-btn").addEventListener("click", showDeleteConfirm);
+  });
+
+  const box = document.getElementById("delete-box");
+  function showDeleteConfirm() {
+    box.innerHTML =
+      '<h2 id="delete-title">刪除本次文件及分析資料？</h2>' +
+      '<p class="ink2">系統會刪除你上載的原始月結單、抽取出來的交易資料，以及本次報告。刪除後不能復原，亦不能再開啟此報告。</p>' +
+      '<p class="small muted">備份及日誌的處理方式按<a href="privacy.html" target="_blank" rel="noopener">私隱政策</a>所述。</p>' +
+      '<div class="modal__foot"><button type="button" class="btn btn--secondary" data-close-modal="delete-modal">取消</button><button type="button" class="btn btn--primary" id="delete-confirm">確認刪除</button></div>';
+    openModal("delete-modal");
+    document.getElementById("delete-confirm").addEventListener("click", doDelete);
+  }
+  function doDelete() {
+    box.innerHTML = '<h2 id="delete-title">正在刪除</h2><p class="ink2"><span class="spinner" style="display:inline-block;border-color:rgba(0,0,0,.2);border-top-color:var(--brand);vertical-align:middle;margin-right:8px" aria-hidden="true"></span>正在刪除文件、抽取資料及報告。請勿關閉此頁。</p>';
+    window.SME_API.deleteReport(jobId).then(() => {
+      track("report_deleted");
+      box.innerHTML =
+        '<h2 id="delete-title">已刪除</h2><div class="notice notice--ok"><span class="notice__icon" aria-hidden="true">✓</span><p>本次文件、抽取資料及報告已刪除。此報告網址不再有效。</p></div>' +
+        '<div class="modal__foot"><a class="btn btn--primary" href="index.html">返回首頁</a></div>';
+      document.getElementById("report-root").innerHTML = '<section class="report-section"><h1 style="font-size:1.5rem">此報告已刪除</h1><p class="ink2">本次文件、抽取資料及報告已刪除。如需再次分析，請重新上載月結單。</p><div class="btn-row"><a class="btn btn--primary" href="index.html#upload">重新上載</a></div></section>';
+    }).catch(() => {
+      box.innerHTML =
+        '<h2 id="delete-title">未能完成刪除</h2><div class="notice notice--err"><span class="notice__icon" aria-hidden="true">!</span><p>今次未能刪除資料，你的文件及報告仍然保留。請重試；如持續失敗，請聯絡支援。</p></div>' +
+        '<div class="modal__foot"><button type="button" class="btn btn--secondary" data-close-modal="delete-modal">返回報告</button><a class="btn btn--ghost" href="about.html#contact">聯絡支援</a><button type="button" class="btn btn--primary" id="delete-retry">重試</button></div>';
+      document.getElementById("delete-retry").addEventListener("click", doDelete);
+    });
+  }
+})();
+</script>
+</body>
+</html>

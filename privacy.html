@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>私隱政策及文件使用說明｜SME Clinic</title>
+<meta name="description" content="SME Clinic 月結單初步分析如何處理你上載的文件：用途、處理者、保留與刪除、人工接觸及你的權利。">
+<link rel="canonical" href="https://www.analyst.sme-clinic-ai.com/privacy.html">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="handling">
+<a class="skip-link" href="#main">跳至主要內容</a>
+<header data-component="site-header"></header>
+<main id="main" class="section">
+  <div class="container prose" data-trust-view="privacy-page">
+    <span class="eyebrow">私隱政策</span>
+    <h1>私隱政策及文件使用說明</h1>
+    <p class="ink2">本頁說明你在本網站上載公司銀行月結單後，文件會如何處理。標示為「待核實」的項目，須由營運及開發團隊核實後填入；核實前本網站不作出相關承諾。</p>
+    <div class="toc"><strong>目錄</strong><ol>
+      <li><a href="#handling">文件使用說明（四項）</a></li>
+      <li><a href="#collect">收集甚麼資料</a></li>
+      <li><a href="#access">報告的存取控制</a></li>
+      <li><a href="#rights">你的權利及刪除方法</a></li>
+      <li><a href="#tracking">網站使用數據</a></li>
+      <li><a href="#contact">聯絡</a></li>
+    </ol></div>
+
+    <h2 id="handling">1. 文件使用說明</h2>
+    <h3>用途</h3>
+    <p>讀取交易、計算收支與結餘，產生本次摘要。系統不會用你的文件作與本次分析無關的用途。</p>
+    <h3>處理者</h3>
+    <p>營運公司：<span data-fill="company.legalName" data-label="營運公司全名"></span>。</p>
+    <p>實際使用的外部 AI／雲端處理服務：<span id="processors"></span></p>
+    <h3>保留與刪除</h3>
+    <table>
+      <thead><tr><th>資料類別</th><th>保留期限</th><th>刪除方法</th></tr></thead>
+      <tbody>
+        <tr><td>原始文件（你上載的 PDF）</td><td colspan="2" data-fill="processing.retentionOriginal" data-label="原始文件保留期限與刪除方法"></td></tr>
+        <tr><td>抽取資料（交易、金額、結餘）</td><td colspan="2" data-fill="processing.retentionExtracted" data-label="抽取資料保留期限與刪除方法"></td></tr>
+        <tr><td>報告（摘要及留意事項）</td><td colspan="2" data-fill="processing.retentionReport" data-label="報告保留期限與刪除方法"></td></tr>
+      </tbody>
+    </table>
+    <p>你可以在報告頁按「刪除本次文件及分析資料」。此操作會刪除原始文件、抽取資料及報告。備份的處理方式須與本政策一致，具體安排：<span data-fill="processing.retentionReport" data-label="備份處理安排"></span>。</p>
+    <h3>人工接觸</h3>
+    <p>顧問是否預設可查看本次報告：<span data-fill="processing.advisorAccessDefault" data-label="顧問預設查看安排"></span>。</p>
+    <p>當你要求顧問跟進時，須另行在授權頁選擇分享內容，預設不勾選。授權方式：<span data-fill="processing.advisorAuthorizeMethod" data-label="授權方法"></span>。按「搵顧問」開啟 WhatsApp 只會帶上你確認的問題類別與查詢句，不會自動夾附公司名稱、金額、帳號、文件、交易明細或報告連結。</p>
+
+    <h2 id="collect">2. 收集甚麼資料</h2>
+    <ul>
+      <li><strong>你上載的月結單 PDF</strong>，以及系統從中抽取的交易日期、摘要、金額、期初及期末結餘。</li>
+      <li><strong>首次分析不收集</strong>姓名、電話、電郵、融資金額或服務類型，亦不要求建立帳戶。</li>
+      <li><strong>只有你要求顧問跟進</strong>時，才會在授權頁另行收集聯絡資料及分享範圍。</li>
+      <li>系統不會收集網上銀行密碼。已加密的 PDF 不會被接受。</li>
+    </ul>
+
+    <h2 id="access">3. 報告的存取控制</h2>
+    <p>免註冊報告仍設有存取控制。報告網址不可由公開網址隨意存取，亦設定為不被搜尋引擎收錄。具體控制方式（例如一次性連結或有效期）：<span class="pending">［待核實：報告存取控制方式］</span>。</p>
+
+    <h2 id="rights">4. 你的權利及刪除方法</h2>
+    <ul>
+      <li>在報告頁按「刪除本次文件及分析資料」即可刪除本次資料。</li>
+      <li>如報告網址已失效或你無法登入報告頁，可透過下方聯絡方法要求刪除。</li>
+      <li>你可以隨時撤回讓顧問查看報告的授權。撤回方法：<span data-fill="processing.advisorAuthorizeMethod" data-label="撤回授權方法"></span>。</li>
+    </ul>
+
+    <h2 id="tracking">5. 網站使用數據</h2>
+    <p>為了解服務是否運作正常，網站會記錄以下事件：點擊示範報告、查看公司及資料處理說明、選擇文件、成功上載、分析完成及查看結果、前往官網做完整分析、「搵顧問」及前往 WhatsApp 的點擊位置。追蹤事件不包含文件名、帳號、交易摘要、金額或其他敏感內容。</p>
+
+    <h2 id="contact">6. 聯絡</h2>
+    <p>營運公司：<span data-fill="company.legalName" data-label="營運公司全名"></span><br>聯絡電郵：<span data-fill="company.contactEmail" data-label="聯絡電郵"></span><br>聯絡電話：<span data-fill="company.contactPhone" data-label="聯絡電話"></span></p>
+    <p class="small muted">最後更新日期：<span class="pending">［待核實：政策生效日期］</span></p>
+  </div>
+</main>
+<footer data-component="site-footer"></footer>
+<script src="js/config.js"></script>
+<script src="js/site.js"></script>
+<script>
+  (function () {
+    const C = window.SME_CONFIG, el = document.getElementById("processors");
+    el.innerHTML = Array.isArray(C.processing.processors) && C.processing.processors.length
+      ? "<ul>" + C.processing.processors.map(p => "<li>" + window.SME.esc(p) + "</li>").join("") + "</ul>"
+      : window.SME.pendingOr(null, "實際使用的外部 AI／雲端處理服務名稱及用途");
+  })();
+</script>
+</body>
+</html>

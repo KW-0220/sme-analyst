@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SME Clinic｜先用一份月結單，睇清公司收支</title>
+<meta name="description" content="上載最近一個月公司銀行月結單，AI 幫你整理戶口進出帳、結餘變化，同需要留意嘅交易。毋須先提交身份證、商業登記或整套財務文件。">
+<link rel="canonical" href="https://www.analyst.sme-clinic-ai.com/">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="home">
+<a class="skip-link" href="#main">跳至主要內容</a>
+<header data-component="site-header"></header>
+
+<main id="main">
+  <!-- B 首屏 Hero：依用戶提供的橫額圖版式；相片檔請存放於 assets/hero-banner.jpg -->
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="container hero__grid">
+      <div>
+        <span class="eyebrow">中小企現金流初步分析</span>
+        <h1>公司啲錢去咗邊？<span class="hero__h1-sub">先用一份月結單，睇清收支。</span></h1>
+        <p class="hero__sub">上載最近一個月公司銀行月結單，AI 幫你整理戶口進出帳、結餘變化，同需要留意嘅交易。</p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="#upload" data-track="cta_upload_hero"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>上載月結單，開始初步分析</a>
+          <a class="btn btn--secondary" href="demo-report.html" data-track="demo_report_click" data-track-placement="hero">先睇示範報告</a>
+        </div>
+        <p class="hero__note">只需一個月完整 PDF。毋須先提交身份證、商業登記或整套財務文件。</p>
+        <p class="hero__scope">初步分析只反映該戶口、該月份的現金流，並不代表整間公司的盈利及財務健康。</p>
+      </div>
+      <div class="hero__photo" role="img" aria-label="一位商戶正在閱讀公司月結單"></div>
+    </div>
+  </section>
+
+  <!-- C 先睇你會收到甚麼 -->
+  <section class="section section--alt" id="what">
+    <div class="container">
+      <div class="section-head">
+        <h2>一份月結單，可以先睇到啲乜？</h2>
+      </div>
+      <div class="preview-row">
+        <div class="preview" aria-label="示範報告預覽">
+          <span class="preview__tag">示範報告・虛構資料</span>
+          <div class="preview__title">2026 年 7 月 現金流初步摘要</div>
+          <div class="preview__meta">銀行往來戶口 •••• 4821・HKD・已讀取全部 4 頁</div>
+          <div class="kpis">
+            <div class="kpi"><div class="kpi__label">總進帳</div><div class="kpi__value">HK$300,000</div></div>
+            <div class="kpi"><div class="kpi__label">總支出</div><div class="kpi__value">HK$330,000</div></div>
+            <div class="kpi"><div class="kpi__label">期末結餘</div><div class="kpi__value">HK$50,000</div></div>
+          </div>
+          <div class="preview__chart">
+            <div class="preview__chart-title">交易日結餘・最低位 HK$9,000（7 月 10 日）</div>
+            <svg viewBox="0 0 400 110" role="img" aria-label="示範結餘折線，7 月 10 日跌至最低位 HK$9,000">
+              <line x1="36" x2="392" y1="10" y2="10" stroke="#e3e7ec"/>
+              <line x1="36" x2="392" y1="50" y2="50" stroke="#e3e7ec"/>
+              <line x1="36" x2="392" y1="90" y2="90" stroke="#e3e7ec"/>
+              <text x="30" y="14" font-size="9" text-anchor="end" fill="#6b7280">160k</text>
+              <text x="30" y="54" font-size="9" text-anchor="end" fill="#6b7280">80k</text>
+              <text x="30" y="94" font-size="9" text-anchor="end" fill="#6b7280">0</text>
+              <polyline fill="none" stroke="#1a9e93" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
+                points="36,50 48,7.5 60,31.5 84,79.5 119,49.5 143,85.5 202,65.5 214,70.3 238,70.5 250,85.5 286,58 309,61 333,70 357,40 381,65"/>
+              <circle cx="143" cy="85.5" r="4" fill="#b42318" stroke="#fff" stroke-width="2"/>
+              <circle cx="381" cy="65" r="4" fill="#1a9e93" stroke="#fff" stroke-width="2"/>
+              <text x="143" y="104" font-size="9" text-anchor="middle" font-weight="600" fill="#1b3a66">最低 HK$9,000</text>
+            </svg>
+          </div>
+        </div>
+        <div class="cards cards--stack">
+        <div class="card">
+          <div class="card__icon" aria-hidden="true">⇅</div>
+          <h3>戶口收支</h3>
+          <p>呢個月入咗幾多、出咗幾多，期末比期初多咗定少咗。</p>
+          <p class="small muted" style="margin-top:8px">顯示進帳、支出及淨流入，不標作營業額或盈利。</p>
+        </div>
+        <div class="card">
+          <div class="card__icon" aria-hidden="true">↘</div>
+          <h3>結餘變化</h3>
+          <p>睇清資金喺邊段時間跌到低位，方便回看當時嘅支出。</p>
+          <p class="small muted" style="margin-top:8px">交易日結餘折線；資料不足時不補畫完整每日曲線。</p>
+        </div>
+        <div class="card">
+          <div class="card__icon" aria-hidden="true">?</div>
+          <h3>需要確認的交易</h3>
+          <p>整理較大額收支及可辨識的異常紀錄，提示你逐項確認。</p>
+          <p class="small muted" style="margin-top:8px">顯示日期、摘要及提示原因；AI 分類不當成已確認事實。</p>
+        </div>
+        </div>
+      </div>
+      <div style="margin-top:24px">
+        <a class="btn btn--secondary" href="demo-report.html" data-track="demo_report_click" data-track-placement="what">查看完整示範報告</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- D 認識 SME Clinic -->
+  <section class="section" id="about" data-trust-view="company">
+    <div class="container about-grid">
+      <div>
+        <h2>上載之前，先了解我哋。</h2>
+        <p class="ink2" style="font-size:1.05rem">SME Clinic 以 AI 協助企業整理銀行月結單及財務文件，將收支、結餘同需要覆核的項目整理成易讀摘要。你可以先了解結果，再決定是否需要進一步協助。</p>
+        <a class="btn btn--secondary" href="about.html">關於我們</a>
+      </div>
+      <div class="company-box">
+        <h3 style="font-size:1rem;margin-bottom:12px">營運者及聯絡方法</h3>
+        <dl>
+          <dt>營運公司</dt><dd data-fill="company.legalName" data-label="營運公司全名"></dd>
+          <dt>聯絡電郵</dt><dd data-fill="company.contactEmail" data-label="聯絡電郵"></dd>
+          <dt>聯絡電話</dt><dd data-fill="company.contactPhone" data-label="聯絡電話"></dd>
+          <dt>網站</dt><dd><a href="https://www.sme-clinic-ai.com" target="_blank" rel="noopener">www.sme-clinic-ai.com</a></dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- E 文件使用說明 -->
+  <section class="section section--alt" id="handling" data-trust-view="handling">
+    <div class="container">
+      <div class="section-head">
+        <h2>你份月結單會點樣處理？</h2>
+        <p>以下四項說明適用於本次初步分析。完整內容見<a href="privacy.html">私隱政策</a>。</p>
+      </div>
+      <div class="handling">
+        <div class="handling__item">
+          <h3>用途</h3>
+          <p>讀取交易、計算收支與結餘，產生本次摘要。</p>
+        </div>
+        <div class="handling__item">
+          <h3>處理者</h3>
+          <p>營運公司：<span data-fill="company.legalName" data-label="營運公司全名"></span>。<br>外部 AI／雲端處理服務：<span id="processors-home"></span></p>
+        </div>
+        <div class="handling__item">
+          <h3>保留與刪除</h3>
+          <p>原始文件：<span data-fill="processing.retentionOriginal" data-label="原始文件保留期限與刪除方法"></span><br>抽取資料：<span data-fill="processing.retentionExtracted" data-label="抽取資料保留期限與刪除方法"></span><br>報告：<span data-fill="processing.retentionReport" data-label="報告保留期限與刪除方法"></span></p>
+        </div>
+        <div class="handling__item">
+          <h3>人工接觸</h3>
+          <p>顧問是否預設可查看：<span data-fill="processing.advisorAccessDefault" data-label="顧問預設查看安排"></span><br>要求跟進時如何授權：<span data-fill="processing.advisorAuthorizeMethod" data-label="授權方法"></span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- F 上載區 -->
+  <section class="section" id="upload">
+    <div class="container">
+      <div class="section-head">
+        <h2>先由一份月結單開始。</h2>
+        <p>選擇主要公司銀行戶口最近一個完整月份的月結單，保留全部頁面。</p>
+        <p class="small"><a href="#handling">你份月結單會點樣處理？</a>・<a href="privacy.html">私隱政策</a></p>
+        <span class="tag" data-claim="free">免費</span> <span class="tag" data-claim="noSignup">免註冊</span>
+      </div>
+      <div class="upload-wrap">
+        <form id="upload-form" novalidate>
+          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-describedby="dropzone-help">
+            <div class="dropzone__icon" aria-hidden="true">📄</div>
+            <div class="dropzone__main">拖放 PDF 到這裏，或按一下選擇檔案。</div>
+            <p class="dropzone__help" id="dropzone-help">一次上載一份 PDF，可包含多頁。請保留交易日期、摘要、金額，以及期初和期末結餘。</p>
+            <input type="file" id="file-input" accept="application/pdf,.pdf" class="sr-only" aria-label="選擇月結單 PDF">
+          </div>
+          <div id="file-status" aria-live="polite" style="margin-top:12px"></div>
+
+          <div class="consent">
+            <input type="checkbox" id="consent" name="consent">
+            <label for="consent">我確認有權提交此文件，並已閱讀<a href="privacy.html" target="_blank" rel="noopener">私隱政策</a>，同意按所述方式處理文件以產生本次分析。</label>
+          </div>
+
+          <button type="submit" class="btn btn--primary" id="submit-btn" disabled>開始初步分析</button>
+          <p class="upload-foot">分析以文件內可辨識資料為準；如有缺頁或內容不清晰，系統會提示你處理。</p>
+          <p class="upload-foot">首次不用填姓名、電話、融資金額或服務類型。預設不要求建立帳戶。</p>
+          <p class="small"><a href="demo-report.html" data-track="demo_report_click" data-track-placement="upload">未準備好文件？先睇示範報告。</a></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- G 常見問題 -->
+  <section class="section section--alt" id="faq">
+    <div class="container">
+      <div class="section-head"><h2>常見問題</h2></div>
+      <div class="faq" style="max-width:760px">
+        <details>
+          <summary>只交一個月月結單，夠唔夠？</summary>
+          <div class="faq__body">足夠先整理該月份、該戶口的收支及結餘。要了解長期趨勢、其他戶口或整體公司財務狀況，便需要更多資料；首次體驗不要求一次交齊。</div>
+        </details>
+        <details>
+          <summary>係咪任何文件都可以分析？</summary>
+          <div class="faq__body">簡單版只接受公司銀行月結單 PDF。商業登記、身份證及其他文件不能代替月結單作收支分析。</div>
+        </details>
+        <details>
+          <summary>睇到進帳，即係睇到公司賺幾多？</summary>
+          <div class="faq__body">進帳可能包含客戶付款、戶口轉帳、股東注資或其他款項。銀行戶口淨流入不等於公司盈利，分類不清楚的交易會列為待確認。</div>
+        </details>
+        <details>
+          <summary>上載後一定要搵顧問嗎？</summary>
+          <div class="faq__body">你可以先自行閱讀摘要。只有你選擇聯絡或要求跟進，才需要另行提供聯絡資料及確認分享範圍。</div>
+        </details>
+        <details>
+          <summary>文件會保留幾耐？</summary>
+          <div class="faq__body">請於上載前查看<a href="#handling">文件使用說明</a>及<a href="privacy.html">私隱政策</a>，了解原始文件、抽取資料及報告各自的保留期限與刪除安排。</div>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-component="site-footer"></footer>
+
+<div class="sticky-cta">
+  <a class="btn btn--primary btn--block" href="#upload" data-track="cta_upload_sticky">上載月結單</a>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/site.js"></script>
+<script src="js/api.js"></script>
+<script src="js/upload.js"></script>
+</body>
+</html>
