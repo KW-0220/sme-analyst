@@ -44,7 +44,7 @@ python3 -m http.server 8765
 模型供應商由環境變數決定：設定了 `GEMINI_API_KEY`（亦接受 `Gemini_Key`）用 Google Gemini（預設模型 `gemini-3.5-flash`，可用 `GEMINI_MODEL` 更改）；否則設定了 `ANTHROPIC_API_KEY` 用 Claude（預設 `claude-opus-5`，可用 `CLAUDE_MODEL` 更改）。兩者共用同一抽取結構（`api/_lib/schema.js`），回傳後都經 zod 驗證。如更換供應商，須同步更新 `js/config.js` 內 `processing.processors` 及保留說明。
 
 - 伺服器不儲存文件、抽取資料或報告；報告只在產生它的瀏覽器工作階段可見。
-- 每次只分析一個戶口、一種幣種。綜合結單會被拒絕並提示改用單一戶口版本。
+- 綜合結單：模型一次抽取全部戶口的交易並標明所屬戶口；每個戶口、每種幣種各自成一份報告，不同幣種不相加。多於一個戶口時，狀態頁讓用戶選擇先看哪個，報告頁可切換。
 - 缺頁或模糊時回傳 `partial`，報告只顯示可核實項目並列明缺漏。
 - 環境變數：`GEMINI_API_KEY` 或 `ANTHROPIC_API_KEY`（二選一，在 Vercel → Settings → Environment Variables 設定）、`GEMINI_MODEL`／`CLAUDE_MODEL`（可選）、`SME_MAX_MB`（可選，預設 4）、`SME_MOCK=1`（本地測試，不呼叫 API）。
 - 戶口號碼只回傳最後 4 位；戶口持有人名稱不回傳瀏覽器。

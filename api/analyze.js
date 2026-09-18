@@ -5,7 +5,7 @@
    可選：GEMINI_MODEL（預設 gemini-3.5-flash）、CLAUDE_MODEL（預設 claude-opus-5）、SME_MAX_MB（預設 4）、SME_MOCK=1（本地測試，不呼叫 API）。 */
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { buildReport } from "./_lib/build-report.js";
+import { buildReport, accountLabel } from "./_lib/build-report.js";
 import { Extraction, SYSTEM_PROMPT } from "./_lib/schema.js";
 import { extractWithGemini } from "./_lib/gemini.js";
 
@@ -91,10 +91,6 @@ export default async function handler(req, res) {
   if (!extracted.accounts.length || !extracted.statement_period) {
     return json(res, 422, { ok: false, code: "unreadable", message: "未能完整讀取月結單，請重新上載全部頁面的清晰版本。" });
   }
-  if (extracted.multiple_currencies || extracted.accounts.length > 1) {
-    const list = extracted.accounts.map(a => [a.account_type, a.masked_number ? "•••• " + a.masked_number : "", a.currency].filter(Boolean).join(" ")).join("；");
-    return json(res, 422, { ok: false, code: "multi_account", message: "此文件包含多個戶口或幣種（" + list + "）。初期每次只分析一個戶口、一種幣種，請上載單一戶口版本的月結單。" });
-  }
   if (!extracted.transactions.length) {
     return json(res, 422, { ok: false, code: "no_transactions", message: "文件內未能讀取任何交易。請確認 PDF 包含交易明細頁，並非只有封面或摘要頁。" });
   }
@@ -102,32 +98,40 @@ export default async function handler(req, res) {
     return json(res, 422, { ok: false, code: "unreadable", message: "未能完整讀取月結單，請重新上載全部頁面的清晰版本。" });
   }
 
-  const report = buildReport(extracted, { reportId });
-  return json(res, 200, { ok: true, report });
+  /* 綜合結單：每個戶口、每種幣種各自成一份報告，不同幣種不相加 */
+  const reports = extracted.accounts.map((acct, i) => {
+    const count = extracted.transactions.filter(t => t.account_index === i && t.amount !== 0).length;
+    if (!count) return { accountIndex: i, accountLabel: accountLabel(acct), empty: true, note: "此戶口在結單期間沒有交易紀錄。" };
+    return buildReport(extracted, { reportId: reportId + "_" + i, accountIndex: i });
+  });
+  if (!reports.some(r => !r.empty)) {
+    return json(res, 422, { ok: false, code: "no_transactions", message: "文件內的戶口在結單期間都沒有交易紀錄。" });
+  }
+  const first = reports.find(r => !r.empty);
+  return json(res, 200, { ok: true, report: first, reports });
 }
 
 /* 本地測試用的模擬抽取結果（SME_MOCK=1） */
 function mockExtraction() {
   return {
     is_bank_statement: true, not_statement_reason: null,
-    accounts: [{ bank_name: "測試銀行", account_type: "往來戶口", masked_number: "4821", currency: "HKD" }],
+    accounts: [{ bank_name: "測試銀行", account_type: "往來戶口", masked_number: "4821", currency: "HKD", opening_balance: 80000, closing_balance: 50000 }],
     statement_period: { start: "2026-07-01", end: "2026-07-31" },
-    opening_balance: 80000, closing_balance: 50000,
     transactions: [
-      { date: "2026-07-02", description: "FPS CREDIT ABC TRADING", amount: 85000, balance_after: 165000, page: 1, category: "customer_payment", needs_confirmation: true, confirmation_reason: null },
-      { date: "2026-07-03", description: "AUTOPAY RENT", amount: -48000, balance_after: 117000, page: 1, category: "rent", needs_confirmation: false, confirmation_reason: null },
-      { date: "2026-07-05", description: "AUTOPAY SALARY", amount: -96000, balance_after: 21000, page: 1, category: "salary", needs_confirmation: false, confirmation_reason: null },
-      { date: "2026-07-08", description: "CHEQUE DEPOSIT", amount: 60000, balance_after: 81000, page: 2, category: "unknown", needs_confirmation: true, confirmation_reason: "支票入帳未列來源" },
-      { date: "2026-07-10", description: "TT PAYMENT SUPPLIER", amount: -72000, balance_after: 9000, page: 2, category: "supplier_payment", needs_confirmation: false, confirmation_reason: null },
-      { date: "2026-07-15", description: "FPS CREDIT", amount: 40000, balance_after: 49000, page: 2, category: "customer_payment", needs_confirmation: true, confirmation_reason: null },
-      { date: "2026-07-16", description: "MPF CONTRIBUTION", amount: -9600, balance_after: 39400, page: 2, category: "mpf", needs_confirmation: false, confirmation_reason: null },
-      { date: "2026-07-18", description: "SERVICE CHARGE", amount: -350, balance_after: 39050, page: 2, category: "bank_fee", needs_confirmation: false, confirmation_reason: null },
-      { date: "2026-07-19", description: "TRANSFER TO 7730", amount: -30000, balance_after: 9050, page: 3, category: "internal_transfer", needs_confirmation: true, confirmation_reason: null },
-      { date: "2026-07-22", description: "FPS CREDIT", amount: 55000, balance_after: 64050, page: 3, category: "customer_payment", needs_confirmation: true, confirmation_reason: null },
-      { date: "2026-07-24", description: "AUTOPAY UTILITIES", amount: -6050, balance_after: 58000, page: 3, category: "utilities", needs_confirmation: false, confirmation_reason: null },
-      { date: "2026-07-26", description: "CREDIT CARD PAYMENT", amount: -18000, balance_after: 40000, page: 3, category: "credit_card", needs_confirmation: false, confirmation_reason: null },
-      { date: "2026-07-28", description: "TRANSFER FROM DIRECTOR", amount: 60000, balance_after: 100000, page: 3, category: "shareholder", needs_confirmation: true, confirmation_reason: null },
-      { date: "2026-07-30", description: "TT PAYMENT SUPPLIER", amount: -50000, balance_after: 50000, page: 4, category: "supplier_payment", needs_confirmation: false, confirmation_reason: null }
+      { account_index: 0, date: "2026-07-02", description: "FPS CREDIT ABC TRADING", amount: 85000, balance_after: 165000, page: 1, category: "customer_payment", needs_confirmation: true, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-03", description: "AUTOPAY RENT", amount: -48000, balance_after: 117000, page: 1, category: "rent", needs_confirmation: false, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-05", description: "AUTOPAY SALARY", amount: -96000, balance_after: 21000, page: 1, category: "salary", needs_confirmation: false, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-08", description: "CHEQUE DEPOSIT", amount: 60000, balance_after: 81000, page: 2, category: "unknown", needs_confirmation: true, confirmation_reason: "支票入帳未列來源" },
+      { account_index: 0, date: "2026-07-10", description: "TT PAYMENT SUPPLIER", amount: -72000, balance_after: 9000, page: 2, category: "supplier_payment", needs_confirmation: false, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-15", description: "FPS CREDIT", amount: 40000, balance_after: 49000, page: 2, category: "customer_payment", needs_confirmation: true, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-16", description: "MPF CONTRIBUTION", amount: -9600, balance_after: 39400, page: 2, category: "mpf", needs_confirmation: false, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-18", description: "SERVICE CHARGE", amount: -350, balance_after: 39050, page: 2, category: "bank_fee", needs_confirmation: false, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-19", description: "TRANSFER TO 7730", amount: -30000, balance_after: 9050, page: 3, category: "internal_transfer", needs_confirmation: true, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-22", description: "FPS CREDIT", amount: 55000, balance_after: 64050, page: 3, category: "customer_payment", needs_confirmation: true, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-24", description: "AUTOPAY UTILITIES", amount: -6050, balance_after: 58000, page: 3, category: "utilities", needs_confirmation: false, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-26", description: "CREDIT CARD PAYMENT", amount: -18000, balance_after: 40000, page: 3, category: "credit_card", needs_confirmation: false, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-28", description: "TRANSFER FROM DIRECTOR", amount: 60000, balance_after: 100000, page: 3, category: "shareholder", needs_confirmation: true, confirmation_reason: null },
+      { account_index: 0, date: "2026-07-30", description: "TT PAYMENT SUPPLIER", amount: -50000, balance_after: 50000, page: 4, category: "supplier_payment", needs_confirmation: false, confirmation_reason: null }
     ],
     pages_total: 4, pages_readable: 4, unreadable_notes: [], multiple_currencies: false
   };

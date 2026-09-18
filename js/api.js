@@ -65,7 +65,11 @@
     try { data = await res.json(); }
     catch (e) { return { ok: false, code: "bad_response", message: "分析服務回應異常（HTTP " + res.status + "），請稍後重試。" }; }
     if (data.ok && data.report) {
-      try { sessionStorage.setItem("sme_report_" + jobId, JSON.stringify(data.report)); } catch (e) {}
+      const reports = Array.isArray(data.reports) && data.reports.length ? data.reports : [data.report];
+      try {
+        sessionStorage.setItem("sme_reports_" + jobId, JSON.stringify(reports));
+        sessionStorage.setItem("sme_report_" + jobId, JSON.stringify(data.report));
+      } catch (e) {}
       await idbDel(jobId);
     }
     return data;
@@ -74,13 +78,22 @@
   function getReport(jobId) {
     try { return JSON.parse(sessionStorage.getItem("sme_report_" + jobId) || "null"); } catch (e) { return null; }
   }
+  /* 綜合結單：同一文件內各戶口的報告 */
+  function getReports(jobId) {
+    try { return JSON.parse(sessionStorage.getItem("sme_reports_" + jobId) || "[]"); } catch (e) { return []; }
+  }
+  function selectReport(jobId, accountIndex) {
+    const r = getReports(jobId).find(x => x.accountIndex === accountIndex && !x.empty);
+    if (r) { try { sessionStorage.setItem("sme_report_" + jobId, JSON.stringify(r)); } catch (e) {} }
+    return r || null;
+  }
 
   /* 刪除：伺服器不保留資料，這裏清除瀏覽器內的文件與報告 */
   async function deleteReport(jobId) {
-    try { sessionStorage.removeItem("sme_report_" + jobId); sessionStorage.removeItem("sme_job"); } catch (e) {}
+    try { sessionStorage.removeItem("sme_report_" + jobId); sessionStorage.removeItem("sme_reports_" + jobId); sessionStorage.removeItem("sme_job"); } catch (e) {}
     try { await idbDel(jobId); } catch (e) {}
     return { ok: true };
   }
 
-  window.SME_API = { startAnalysis, analyze, getReport, deleteReport, getJob, setJob, getPendingFile };
+  window.SME_API = { startAnalysis, analyze, getReport, getReports, selectReport, deleteReport, getJob, setJob, getPendingFile };
 })();

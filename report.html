@@ -12,6 +12,7 @@
 <header data-component="site-header"></header>
 <div id="fictional-banner" class="demo-banner no-print hidden" role="note">此為原型示範資料，並非真實客戶或你的分析結果。正式系統接入後，此處顯示你上載文件的實際結果。</div>
 <main id="main" class="section--tight">
+  <div class="container no-print" id="account-switch"></div>
   <div class="container" id="report-root"></div>
 </main>
 
@@ -37,6 +38,16 @@
     '<a class="btn btn--ghost btn--sm" href="index.html#upload">重新分析</a>';
 
   const r = window.SME_API.getReport(jobId);
+  const all = window.SME_API.getReports(jobId);
+  if (r && all.length > 1) {
+    document.getElementById("account-switch").innerHTML =
+      '<div class="notice notice--info" style="margin-top:20px"><span class="notice__icon" aria-hidden="true">i</span><div><p><strong>此文件包含 ' + all.length + ' 個戶口。</strong>每個戶口及幣種各自一份摘要，不同幣種不會相加。</p><div class="btn-row" style="margin-top:8px">' +
+      all.map(x => x.empty
+        ? '<span class="tag">' + esc(x.accountLabel) + '：沒有交易</span>'
+        : '<button type="button" class="btn btn--sm ' + (x.accountIndex === r.accountIndex ? "btn--primary" : "btn--secondary") + '" data-switch="' + x.accountIndex + '"' + (x.accountIndex === r.accountIndex ? ' aria-current="true"' : "") + '>' + esc(x.accountLabel) + "</button>").join("") +
+      "</div></div></div>";
+    document.querySelectorAll("[data-switch]").forEach(b => b.addEventListener("click", () => { window.SME_API.selectReport(jobId, Number(b.getAttribute("data-switch"))); location.reload(); }));
+  }
   if (!r) {
     document.getElementById("report-root").innerHTML = '<section class="report-section"><h1 style="font-size:1.5rem">找不到此報告</h1><p class="ink2">報告只保存在產生它的瀏覽器工作階段。如你已關閉分頁、刪除了報告，或以其他裝置開啟此連結，便需要重新上載月結單。</p><div class="btn-row"><a class="btn btn--primary" href="index.html#upload">重新上載</a><a class="btn btn--secondary" href="demo-report.html">先睇示範報告</a></div></section>';
   } else {

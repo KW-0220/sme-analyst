@@ -29,18 +29,28 @@ function dayLabel(d) {
   return m ? `${parseInt(m[2], 10)} 月 ${parseInt(m[3], 10)} 日` : d;
 }
 
-/* extracted: 由 api/analyze.js 的 zod schema 驗證後的物件 */
+export function maskLast4(str) {
+  const digits = String(str || "").replace(/\D/g, "");
+  return digits.length >= 4 ? digits.slice(-4) : "";
+}
+
+export function accountLabel(acct) {
+  const last4 = maskLast4(acct.masked_number);
+  return [acct.account_type || "銀行戶口", last4 ? "•••• " + last4 : "", acct.currency].filter(Boolean).join(" ");
+}
+
+/* extracted: 經 zod 驗證的抽取結果；accountIndex: 要計算的戶口 */
 export function buildReport(extracted, opts) {
-  const { reportId } = opts;
-  const acct = extracted.accounts[0];
+  const { reportId, accountIndex = 0 } = opts;
+  const acct = extracted.accounts[accountIndex];
   const cur = acct.currency;
   const txs = extracted.transactions
-    .filter(t => t.amount !== 0)
+    .filter(t => t.account_index === accountIndex && t.amount !== 0)
     .map(t => ({ ...t }))
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : (a.page - b.page)));
 
-  const opening = extracted.opening_balance;
-  const closing = extracted.closing_balance;
+  const opening = acct.opening_balance;
+  const closing = acct.closing_balance;
   const totalIn = txs.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0);
   const totalOut = txs.filter(t => t.amount < 0).reduce((s, t) => s - t.amount, 0);
   const net = totalIn - totalOut;
@@ -183,11 +193,13 @@ export function buildReport(extracted, opts) {
 
   const acctType = acct.account_type ? acct.account_type : "銀行戶口";
   /* 只保留戶口號碼最後 4 位，其他一律不回傳瀏覽器 */
-  const digits = String(acct.masked_number || "").replace(/\D/g, "");
-  const last4 = digits.length >= 4 ? digits.slice(-4) : "";
+  const last4 = maskLast4(acct.masked_number);
   return {
     isFictional: false,
     reportId,
+    accountIndex,
+    accountLabel: accountLabel(acct),
+    accountCount: extracted.accounts.length,
     period: { label: periodLabel(extracted.statement_period.start, extracted.statement_period.end), start: extracted.statement_period.start, end: extracted.statement_period.end, isLatestMonth: isLatestMonth(extracted.statement_period.end) },
     currency: cur,
     account: { bankLabel: [acct.bank_name, acctType].filter(Boolean).join(" "), maskedNumber: last4 ? "•••• " + last4 : "" },
