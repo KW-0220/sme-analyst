@@ -86,7 +86,9 @@
       render("no_job"); return;
     }
     render("reading");
-    const result = await window.SME_API.analyze(jobId);
+    const result = await window.SME_API.analyze(jobId, st => {
+      if (st === "retrying") { const n = card.querySelector(".small.muted"); if (n) n.textContent = "連線曾中斷，正在自動重試一次。請保持此頁開啟。"; }
+    });
     if (!result.ok) {
       if (result.code === "unreadable") render("unreadable", result.message);
       else if (["not_statement", "multi_account", "no_transactions", "encrypted", "not_pdf", "too_large", "too_long", "refusal"].includes(result.code)) render("rejected", result.message);

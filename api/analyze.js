@@ -44,12 +44,15 @@ export default async function handler(req, res) {
   }
 
   const reportId = "r_" + Math.random().toString(36).slice(2, 10);
+  const t0 = Date.now();
+  const log = (stage, extra) => console.log(JSON.stringify(Object.assign({ stage, reportId, ms: Date.now() - t0, bytes: buf.length }, extra || {})));
 
   let extracted;
   if (process.env.SME_MOCK === "1") {
     extracted = mockExtraction();
   } else if (GEMINI_KEY) {
     const r = await extractWithGemini(buf, { apiKey: GEMINI_KEY, model: GEMINI_MODEL });
+    log("gemini", { ok: r.ok, code: r.code || null, usage: r.usage || null, model: GEMINI_MODEL });
     if (!r.ok) return json(res, r.code === "auth" ? 500 : r.code === "rate_limit" ? 503 : r.code === "api" ? 502 : 422, { ok: false, code: r.code, message: r.message });
     extracted = r.extracted;
   } else if (process.env.ANTHROPIC_API_KEY) {
@@ -108,6 +111,7 @@ export default async function handler(req, res) {
     return json(res, 422, { ok: false, code: "no_transactions", message: "文件內的戶口在結單期間都沒有交易紀錄。" });
   }
   const first = reports.find(r => !r.empty);
+  log("done", { accounts: reports.length, transactions: extracted.transactions.length, pages: extracted.pages_total });
   return json(res, 200, { ok: true, report: first, reports });
 }
 

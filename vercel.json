@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/analyze.js": { "maxDuration": 60, "memory": 1024 }
+    "api/analyze.js": { "maxDuration": 300, "memory": 1024 }
   },
   "headers": [
     {

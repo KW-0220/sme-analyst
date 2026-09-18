@@ -51,19 +51,30 @@
 
   async function getPendingFile(jobId) { return idbGet(jobId); }
 
-  /* 分析頁：上載並等待結果。回傳 { ok, report } 或 { ok:false, code, message } */
-  async function analyze(jobId) {
+  /* 分析頁：上載並等待結果。回傳 { ok, report, reports } 或 { ok:false, code, message }
+     連線中斷時自動重試一次；逾時（504）另行提示。 */
+  async function analyze(jobId, onStatus) {
     const file = await idbGet(jobId);
     if (!file) return { ok: false, code: "no_file", message: "找不到待分析的文件，請重新上載。" };
-    let res;
-    try {
-      res = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: file });
-    } catch (e) {
-      return { ok: false, code: "network", message: "未能連接分析服務，請檢查網絡後重試。" };
+    const started = Date.now();
+    const elapsed = () => Math.round((Date.now() - started) / 1000);
+    let res = null, lastErr = null;
+    for (let attempt = 0; attempt < 2 && !res; attempt++) {
+      if (attempt && onStatus) onStatus("retrying");
+      try {
+        res = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: file, cache: "no-store" });
+      } catch (e) {
+        lastErr = e;
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+    if (!res) return { ok: false, code: "network", message: "與分析服務的連線在 " + elapsed() + " 秒後中斷，已自動重試一次仍未成功。請保持此頁開啟、確認網絡穩定後按「重試」；如文件頁數很多，可先試較短的月結單。" };
+    if (res.status === 504 || res.status === 502) {
+      return { ok: false, code: "timeout", message: "分析在 " + elapsed() + " 秒後逾時（伺服器回應 " + res.status + "）。請按「重試」；如文件頁數很多，可先試較短的月結單。" };
     }
     let data;
     try { data = await res.json(); }
-    catch (e) { return { ok: false, code: "bad_response", message: "分析服務回應異常（HTTP " + res.status + "），請稍後重試。" }; }
+    catch (e) { return { ok: false, code: "bad_response", message: "分析服務回應異常（HTTP " + res.status + "，" + elapsed() + " 秒），請稍後重試。" }; }
     if (data.ok && data.report) {
       const reports = Array.isArray(data.reports) && data.reports.length ? data.reports : [data.report];
       try {
