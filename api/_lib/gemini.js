@@ -11,11 +11,16 @@ export async function extractWithGemini(buf, { apiKey, model }) {
     ] }],
     generationConfig: { responseMimeType: "application/json", responseSchema: GEMINI_SCHEMA, temperature: 0, maxOutputTokens: 32768 }
   };
+  /* 429（配額或每分鐘上限）及 503（需求高峰）屬暫時性，等候後自動重試一次 */
   let res;
-  try {
-    res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey }, body: JSON.stringify(body) });
-  } catch (e) {
-    return { ok: false, code: "api", message: "未能連接 AI 服務，請稍後重試。" };
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey }, body: JSON.stringify(body) });
+    } catch (e) {
+      return { ok: false, code: "api", message: "未能連接 AI 服務，請稍後重試。" };
+    }
+    if ((res.status === 429 || res.status === 503) && attempt === 0) { await new Promise(r => setTimeout(r, 4000)); continue; }
+    break;
   }
   if (res.status === 400 || res.status === 401 || res.status === 403) {
     const t = await res.text().catch(() => "");
