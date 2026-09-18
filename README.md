@@ -66,6 +66,17 @@ python3 -m http.server 8765
 | `whatsapp_open` | 前往 WhatsApp |
 | `report_download`、`report_deleted`、`advisor_authorized` | 報告操作 |
 
+## 部署到 www.analyst.sme-clinic-ai.com
+
+目前該網址沒有任何 DNS 紀錄，所以瀏覽器看不到內容。倉庫已附 GitHub Pages 部署工作流程（`.github/workflows/deploy-pages.yml`），啟用步驟：
+
+1. GitHub 倉庫 Settings → Pages → Build and deployment → Source 選「GitHub Actions」。
+2. 同頁 Custom domain 填入 `www.analyst.sme-clinic-ai.com`，儲存後勾選 Enforce HTTPS。
+3. 在 DNS（sme-clinic-ai.com 的網域管理，目前由 Cloudflare 解析）新增 CNAME 紀錄：名稱 `www.analyst`，目標 `kw-0220.github.io`。如使用 Cloudflare，該紀錄先設為 DNS only（灰雲）以便 GitHub 簽發證書。
+4. 推送到 `main` 或本分支即會自動部署。
+
+如選用其他靜態主機（Cloudflare Pages、Netlify 等），直接以倉庫根目錄為發布目錄，不需建置指令。
+
 ## 上線前
 
 見 `docs/launch-checklist.md`。
