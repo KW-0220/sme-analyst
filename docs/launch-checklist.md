@@ -6,13 +6,13 @@
 
 - [ ] 營運公司全名
 - [ ] 聯絡電郵
-- [ ] 聯絡電話
+- [x] 聯絡電話：9805 8577（WhatsApp）
 - [ ] 營業地址
 - [ ] 服務時間
 
 ## 顧問接駁
 
-- [ ] `whatsappNumber`：顧問 WhatsApp 號碼。未填時「搵顧問」視窗只提供複製訊息，不接駁。
+- [x] `whatsappNumber`：已填 85298058577
 - [ ] `processing.advisorAccessDefault`：顧問是否預設可查看報告
 - [ ] `processing.advisorAuthorizeMethod`：用戶要求跟進時如何授權、如何撤回
 

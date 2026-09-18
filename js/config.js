@@ -17,14 +17,14 @@ window.SME_CONFIG = {
   company: {
     legalName: null,        // 經確認的營運公司全名
     contactEmail: null,     // 真實聯絡電郵
-    contactPhone: null,     // 真實聯絡電話
+    contactPhone: "9805 8577（WhatsApp）", // 用戶提供的 WhatsApp 電話
     address: null,          // 營業地址（如需顯示）
     businessHours: null     // 服務時間（如需顯示）
   },
 
   /* 顧問 WhatsApp 號碼，格式為國際區號加號碼、不含加號及空格（例如 852 開頭）。
      未確認前為 null；此時「搵顧問」視窗只提供複製訊息，不接駁號碼。 */
-  whatsappNumber: null,
+  whatsappNumber: "85298058577",
 
   /* 文件使用說明及私隱政策所需資料（須核實） */
   processing: {
