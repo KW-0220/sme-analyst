@@ -3,7 +3,7 @@
    不會以估計資料代替。上線前請對照 docs/launch-checklist.md 逐項填入。 */
 window.SME_CONFIG = {
   siteName: "SME Clinic",
-  siteUrl: "https://www.analyst.sme-clinic-ai.com",
+  siteUrl: "https://analyst.sme-clinic-ai.com",
 
   /* 官方 Logo 圖檔路徑（例如 "assets/logo.png"）。為 null 時使用 js/site.js 內依 Logo 重繪的 SVG。 */
   logoImage: "assets/logo.png",

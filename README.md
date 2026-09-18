@@ -1,6 +1,6 @@
 # SME Clinic 月結單初步分析網站
 
-網址：https://www.analyst.sme-clinic-ai.com
+網址：https://analyst.sme-clinic-ai.com（DNS 已指向 Vercel；`www.analyst.sme-clinic-ai.com` 尚未設定紀錄）
 
 這是一個靜態多頁網站（HTML、CSS、原生 JavaScript），不需要建置工具。任何靜態伺服器都可以直接部署整個目錄。
 
@@ -66,14 +66,14 @@ python3 -m http.server 8765
 | `whatsapp_open` | 前往 WhatsApp |
 | `report_download`、`report_deleted`、`advisor_authorized` | 報告操作 |
 
-## 部署到 www.analyst.sme-clinic-ai.com（Vercel）
+## 部署到 analyst.sme-clinic-ai.com（Vercel）
 
-目前該網址沒有任何 DNS 紀錄，所以瀏覽器看不到內容。網站是純靜態檔案，Vercel 不需任何建置設定：
+網站是純靜態檔案，Vercel 不需任何建置設定：
 
 1. 在 Vercel 按 Add New → Project，匯入 GitHub 倉庫 `KW-0220/sme-analyst`。
 2. Framework Preset 選 Other；Build Command 留空；Output Directory 留空（根目錄）。
 3. Settings → Git → Production Branch 設為要上線的分支（目前為 `claude/website-design-pages-74x4d8`，合併後改為 `main`）。
-4. Settings → Domains 加入 `www.analyst.sme-clinic-ai.com`。Vercel 會顯示要新增的 DNS 紀錄，一般是 CNAME `www.analyst` 指向 `cname.vercel-dns.com`。
+4. Settings → Domains 加入 `analyst.sme-clinic-ai.com`（已完成）。如亦要支援 `www.analyst.sme-clinic-ai.com`，在同頁再加入該網域並設為 Redirect 到主網域，然後在 DNS 加 CNAME `www.analyst` 指向 Vercel 顯示的目標。
 5. 到 sme-clinic-ai.com 的 DNS 管理（目前由 Cloudflare 解析）新增該紀錄。如在 Cloudflare，先設為 DNS only（灰雲），待 Vercel 顯示 Valid Configuration 後再決定是否開啟代理。
 6. 之後每次推送到 Production Branch 都會自動部署。
 

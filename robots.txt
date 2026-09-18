@@ -3,4 +3,4 @@ Disallow: /analysis.html
 Disallow: /report.html
 Disallow: /authorize.html
 Allow: /
-Sitemap: https://www.analyst.sme-clinic-ai.com/sitemap.xml
+Sitemap: https://analyst.sme-clinic-ai.com/sitemap.xml
