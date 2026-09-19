@@ -27,6 +27,7 @@
 ## 系統限制（`js/config.js` → `upload`）
 
 - [ ] Vercel → Settings → Environment Variables 加入 `GEMINI_API_KEY`（Production），否則分析會回報「伺服器未設定 AI 服務金鑰」
+- [ ] Gemini 專案已轉為預付制，須在 https://ai.studio/projects 為專案增值，否則所有分析回報「預付額度已用完」
 - [ ] 確認 Gemini API key 所屬方案：免費層的請求內容可能按 Google 條款用於改善產品，處理客戶月結單前應改用已啟用計費的方案，並核對私隱政策的描述
 
 - [x] `maxSizeMB`：4 MB（Vercel 函數請求上限 4.5 MB）

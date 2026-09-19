@@ -53,7 +53,7 @@ export default async function handler(req, res) {
   } else if (GEMINI_KEY) {
     const r = await extractWithGemini(buf, { apiKey: GEMINI_KEY, model: GEMINI_MODEL, fallbackModels: (process.env.GEMINI_FALLBACK_MODELS || "").split(",").map(x => x.trim()).filter(Boolean).length ? process.env.GEMINI_FALLBACK_MODELS.split(",").map(x => x.trim()) : undefined });
     log("gemini", { ok: r.ok, code: r.code || null, usage: r.usage || null, model: r.model || GEMINI_MODEL });
-    if (!r.ok) return json(res, r.code === "auth" ? 500 : r.code === "rate_limit" ? 503 : r.code === "api" ? 502 : 422, { ok: false, code: r.code, message: r.message });
+    if (!r.ok) return json(res, (r.code === "auth" || r.code === "credits") ? 500 : r.code === "rate_limit" ? 503 : r.code === "api" ? 502 : 422, { ok: false, code: r.code, message: r.message });
     extracted = r.extracted;
   } else if (process.env.ANTHROPIC_API_KEY) {
     const client = new Anthropic();

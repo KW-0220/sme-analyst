@@ -39,6 +39,7 @@ async function extractOnce(buf, { apiKey, model }) {
     }
     if (res.status === 429) {
       const t = await res.clone().text().catch(() => "");
+      if (/prepayment|credits are depleted/i.test(t)) return { ok: false, code: "credits", message: "AI 服務的預付額度已用完，請聯絡網站管理員增值後再試。" };
       if (/PerDay/i.test(t)) return { ok: false, code: "quota_day", message: "此模型今日的免費額度已用完。" };
     }
     if ((res.status === 429 || res.status === 503) && waits < 1) { waits++; await new Promise(r => setTimeout(r, 12000)); continue; }
