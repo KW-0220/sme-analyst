@@ -274,9 +274,20 @@
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   }
 
-  window.SME = { esc, pendingOr, track, toast, openModal, closeModal, openAdvisor, questionCard, fmtHKD, fmtSize };
+  window.SME = { esc, pendingOr, track, toast, openModal, closeModal, openAdvisor, questionCard, fmtHKD, fmtSize, source };
+
+  /* 來源標記：由工程版首頁等入口帶 ?from=engineering 進入時記錄，報告用相應的說法呈現 */
+  function source() {
+    try {
+      const q = new URLSearchParams(location.search).get("from");
+      if (q && /^[a-z-]{1,30}$/.test(q)) sessionStorage.setItem("sme_source", q);
+      return sessionStorage.getItem("sme_source") || "";
+    } catch (e) { return ""; }
+  }
 
   document.addEventListener("DOMContentLoaded", () => {
+    const src = source();
+    if (src) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: "source", source: src }); }
     renderHeader(document.body.getAttribute("data-page"));
     renderFooter();
     initStickyCta();

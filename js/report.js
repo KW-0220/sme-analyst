@@ -122,6 +122,7 @@
     opts = opts || {};
     CUR = r.currency || "HKD";
     const kind = opts.reportKind || "prelim";
+    const bankFraming = (window.SME.source && window.SME.source()) === "engineering";
     const root = document.getElementById("report-root");
     const net = r.totalIn - r.totalOut;
     const confirmCount = r.transactions.filter(t => t.confirm).length;
@@ -163,9 +164,11 @@
         txTable(r) +
       "</section>" +
 
-      '<section class="report-section" id="attention"><h2>留意事項</h2>' +
-        '<p class="ink2">以下只描述文件可支持的觀察。待確認事項並非已確定的財務問題。每項均可按「搵顧問」查詢。</p>' +
-        '<div class="qcards">' + r.attention.map(q => questionCard(q, kind)).join("") + "</div>" +
+      '<section class="report-section" id="attention">' +
+        (bankFraming
+          ? '<h2>銀行可能會問嘅問題</h2><p class="ink2">以下是根據呢份月結單整理、銀行審批時常會追問嘅事項，每項附交易同頁碼依據。「可能會問」唔代表銀行一定會問，亦唔代表有問題；先準備好答案，就唔會臨時答唔出。每項均可按「搵顧問」查詢。</p>'
+          : '<h2>留意事項</h2><p class="ink2">以下只描述文件可支持的觀察。待確認事項並非已確定的財務問題。每項均可按「搵顧問」查詢。</p>') +
+        '<div class="qcards">' + r.attention.map(q => questionCard(bankFraming ? Object.assign({}, q, { kind: "銀行可能會問" }) : q, kind)).join("") + "</div>" +
         (r.notFound && r.notFound.length ? '<div class="notice" style="margin-top:14px"><span class="notice__icon" aria-hidden="true" style="background:var(--surface-3)">–</span><div>' + r.notFound.map(n => "<p>" + esc(n) + "</p>").join("") + "</div></div>" : "") +
       "</section>" +
 
