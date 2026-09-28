@@ -81,6 +81,19 @@ GEMINI_API_KEY=... node scripts/dev-server.mjs
 | `whatsapp_open` | 前往 WhatsApp |
 | `report_download`、`report_deleted`、`advisor_authorized` | 報告操作 |
 
+## 嵌入其他 SME Clinic 頁面（免費檢查元件）
+
+`embed/check.js` 是可嵌入的免費檢查元件：上載一份月結單、呼叫本站 `/api/analyze`、在同一頁顯示「銀行可能會問嘅問題」。任何 `*.sme-clinic-ai.com` 頁面加入以下兩行即可，頁面本身不需要 API key：
+
+```html
+<div id="sme-check"></div>
+<script src="https://analyst.sme-clinic-ai.com/embed/check.js" defer
+        data-target="#sme-check" data-theme="light" data-vertical="網店"
+        data-full-url="https://www.sme-clinic-ai.com" data-full-label="做完整分析"></script>
+```
+
+屬性：`data-theme`（light 或 dark）、`data-vertical`（文案用，例如「網店」「工程公司」）、`data-whatsapp`（預設 85298058577）、`data-full-url` 與 `data-full-label`（完整分析按鈕，省略則不顯示）。示範頁：`embed/demo.html`。
+
 ## 部署到 analyst.sme-clinic-ai.com（Vercel）
 
 網站是純靜態檔案，Vercel 不需任何建置設定：
