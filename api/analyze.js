@@ -15,6 +15,22 @@ const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.Gemini_Key || proce
 const CLAUDE_MODEL = process.env.CLAUDE_MODEL || "claude-opus-5";
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
+/* 跨域：只允許 SME Clinic 自家網域（例如工程版首頁）在頁面內直接呼叫；本地開發時另允許 localhost */
+const ALLOWED_ORIGIN = /^https:\/\/([a-z0-9-]+\.)*sme-clinic-ai\.com$/i;
+const LOCAL_ORIGIN = /^(http:\/\/(localhost|127\.0\.0\.1)(:\d+)?|https:\/\/[a-z0-9-]+\.vercel\.app)$/i;
+function cors(req, res) {
+  const origin = req.headers.origin || "";
+  const ok = ALLOWED_ORIGIN.test(origin) || (process.env.VERCEL_ENV !== "production" && LOCAL_ORIGIN.test(origin));
+  if (ok) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Max-Age", "600");
+    res.setHeader("Vary", "Origin");
+  }
+  return ok;
+}
+
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -31,7 +47,10 @@ async function readBody(req) {
 }
 
 export default async function handler(req, res) {
+  const corsOk = cors(req, res);
+  if (req.method === "OPTIONS") { res.statusCode = corsOk ? 204 : 403; res.end(); return; }
   if (req.method !== "POST") return json(res, 405, { ok: false, code: "method", message: "只接受 POST。" });
+  if (req.headers.origin && !corsOk) return json(res, 403, { ok: false, code: "origin", message: "此來源不允許呼叫分析服務。" });
 
   let buf;
   try { buf = await readBody(req); } catch (e) { return json(res, 400, { ok: false, code: "body", message: "未能讀取上載內容，請重試。" }); }

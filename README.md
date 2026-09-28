@@ -48,6 +48,7 @@ python3 -m http.server 8765
 - 缺頁或模糊時回傳 `partial`，報告只顯示可核實項目並列明缺漏。
 - 環境變數：`GEMINI_API_KEY` 或 `ANTHROPIC_API_KEY`（二選一，在 Vercel → Settings → Environment Variables 設定）、`GEMINI_MODEL`／`CLAUDE_MODEL`（可選）、`SME_MAX_MB`（可選，預設 4）、`SME_MOCK=1`（本地測試，不呼叫 API）。
 - 戶口號碼只回傳最後 4 位；戶口持有人名稱不回傳瀏覽器。
+- 跨域：`/api/analyze` 只接受 `*.sme-clinic-ai.com` 的來源（工程版首頁的免費檢查在頁面內直接呼叫此 API）；非正式環境另接受 localhost 及 `*.vercel.app`。
 - `vercel.json` 將函數 `maxDuration` 設為 300 秒。
 - Gemini 免費層每個模型每日只有 20 次請求，且每分鐘有 token 上限；正式對外服務前應在 Google AI Studio 為專案啟用計費。實測：4 頁 16 筆交易約 10 至 50 秒，8 頁 120 筆約 40 秒，輸出約每筆交易 80 至 100 token。
 
