@@ -16,7 +16,7 @@
 - [x] `processing.advisorAccessDefault`：已填（顧問預設不會看到上載文件，直到用戶需要詳細分析）
 - [x] `processing.advisorAuthorizeMethod`：已填授權方式（進行詳細分析時授權）
 - [x] `processing.advisorRevokeMethod`：已填撤回方法（電郵 marketing@sme-clinic-ai.com 要求撤回）
-- [ ] 授權有效期：`authorize.html` 未有顯示，如有期限須另行提供
+- [x] `processing.advisorAuthorizeValidity`：授權沒有有效期，撤回前一直有效
 
 ## 文件使用說明及私隱政策（`js/config.js` → `processing`）
 
