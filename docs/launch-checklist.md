@@ -4,8 +4,8 @@
 
 ## 營運資料（`js/config.js` → `company`）
 
-- [ ] 營運公司全名
-- [ ] 聯絡電郵
+- [x] 營運公司全名：SME Clinic Limited
+- [x] 聯絡電郵：marketing@sme-clinic-ai.com
 - [x] 聯絡電話：9805 8577（WhatsApp）
 - [ ] 營業地址
 - [ ] 服務時間
@@ -13,8 +13,10 @@
 ## 顧問接駁
 
 - [x] `whatsappNumber`：已填 85298058577
-- [ ] `processing.advisorAccessDefault`：顧問是否預設可查看報告
-- [ ] `processing.advisorAuthorizeMethod`：用戶要求跟進時如何授權、如何撤回
+- [x] `processing.advisorAccessDefault`：已填（顧問預設不會看到上載文件，直到用戶需要詳細分析）
+- [x] `processing.advisorAuthorizeMethod`：已填授權方式（進行詳細分析時授權）
+- [x] `processing.advisorRevokeMethod`：已填撤回方法（電郵 marketing@sme-clinic-ai.com 要求撤回）
+- [x] `processing.advisorAuthorizeValidity`：授權沒有有效期，撤回前一直有效
 
 ## 文件使用說明及私隱政策（`js/config.js` → `processing`）
 
