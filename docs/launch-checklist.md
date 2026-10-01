@@ -23,7 +23,7 @@
 - [x] `processors`：已按現行實作填寫（Google Gemini API、Vercel）
 - [x] `retentionOriginal`、`retentionExtracted`、`retentionReport`：已按現行實作填寫（伺服器不儲存；報告只在瀏覽器工作階段）。如日後加入資料庫，須更新
 - [ ] 核對 Google Gemini API 服務條款的描述是否需要補充具體期限
-- [x] `privacy.html`：報告存取控制方式（報告於分析後自動刪除）、政策生效日期（9月20日）
+- [x] `privacy.html`：報告存取控制方式（報告於分析後自動刪除）、政策生效日期（2026年9月20日）
 - [ ] `terms.html`：顧問收費及服務身份、佣金披露（須與實際營運一致）、管轄法律、生效日期
 
 ## 系統限制（`js/config.js` → `upload`）
