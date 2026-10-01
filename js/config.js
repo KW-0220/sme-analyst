@@ -37,7 +37,8 @@ window.SME_CONFIG = {
     retentionExtracted: "伺服器不儲存抽取資料；Google 按其 Gemini API 服務條款處理請求內容",
     retentionReport: "只保存在你的瀏覽器本次工作階段，關閉分頁或按「刪除本次文件及分析資料」即清除；伺服器不保留報告，亦沒有備份",
     advisorAccessDefault: "顧問不會看到你上傳的文件，直到你稍後需要詳細分析時，顧問才會查看你的文件，以協助你申請融資", // 顧問是否預設可查看本次報告（例如「預設不可查看」）
-    advisorAuthorizeMethod: "當下一步進行詳細分析時，你可以授權查看你的文件以作跟進" // 用戶要求跟進時如何授權
+    advisorAuthorizeMethod: "當下一步進行詳細分析時，你可以授權查看你的文件以作跟進",
+    advisorRevokeMethod: "電郵 marketing@sme-clinic-ai.com 要求撤回" // 撤回授權方法 // 用戶要求跟進時如何授權
   },
 
   /* 上載限制（由開發團隊按系統實際設定填入） */
