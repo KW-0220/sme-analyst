@@ -7,8 +7,8 @@
 - [x] 營運公司全名：SME Clinic Limited
 - [x] 聯絡電郵：marketing@sme-clinic-ai.com
 - [x] 聯絡電話：9805 8577（WhatsApp）
-- [ ] 營業地址
-- [ ] 服務時間
+- [x] 營業地址：太子 始創中心2220室
+- [x] 服務時間：早上9AM 至 晚上6:30PM
 
 ## 顧問接駁
 
@@ -23,7 +23,7 @@
 - [x] `processors`：已按現行實作填寫（Google Gemini API、Vercel）
 - [x] `retentionOriginal`、`retentionExtracted`、`retentionReport`：已按現行實作填寫（伺服器不儲存；報告只在瀏覽器工作階段）。如日後加入資料庫，須更新
 - [ ] 核對 Google Gemini API 服務條款的描述是否需要補充具體期限
-- [ ] `privacy.html`：報告存取控制方式、政策生效日期
+- [x] `privacy.html`：報告存取控制方式（報告於分析後自動刪除）、政策生效日期（9月20日）
 - [ ] `terms.html`：顧問收費及服務身份、佣金披露（須與實際營運一致）、管轄法律、生效日期
 
 ## 系統限制（`js/config.js` → `upload`）

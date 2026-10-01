@@ -18,8 +18,8 @@ window.SME_CONFIG = {
     legalName: "SME Clinic Limited", // 經確認的營運公司全名
     contactEmail: "marketing@sme-clinic-ai.com", // 聯絡電郵
     contactPhone: "9805 8577（WhatsApp）", // 用戶提供的 WhatsApp 電話
-    address: null,          // 營業地址（如需顯示）
-    businessHours: null     // 服務時間（如需顯示）
+    address: "太子 始創中心2220室", // 營業地址
+    businessHours: "早上9AM 至 晚上6:30PM" // 服務時間
   },
 
   /* 顧問 WhatsApp 號碼，格式為國際區號加號碼、不含加號及空格（例如 852 開頭）。
